@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timesrui 网站修改完全教程</title>
+    <style>
+        @page {
+            margin: 2cm;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+            line-height: 1.8;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: white;
+        }
+        
+        h1 {
+            color: #ff6b9d;
+            border-bottom: 3px solid #ff6b9d;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            page-break-before: always;
+        }
+        
+        h1:first-of-type {
+            page-break-before: avoid;
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        h2 {
+            color: #2d7a3e;
+            margin-top: 30px;
+            border-left: 4px solid #2d7a3e;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: #ff6b9d;
+            margin-top: 20px;
+        }
+        
+        h4 {
+            color: #666;
+            margin-top: 15px;
+        }
+        
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            color: #d63384;
+            font-size: 14px;
+        }
+        
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+            page-break-inside: avoid;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            color: #333;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+        
+        table th {
+            background: #ff6b9d;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        
+        table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .box {
+            background: #fff5f7;
+            border-left: 4px solid #ff6b9d;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            page-break-inside: avoid;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h2 {
+            margin-top: 0;
+            color: #ff6b9d;
+            border: none;
+            padding: 0;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            margin: 10px 0;
+        }
+        
+        .toc a {
+            color: #2d7a3e;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            color: #ff6b9d;
+            text-decoration: underline;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        @media print {
+            body {
+                padding: 0;
+            }
+            
+            .no-print {
+                display: none;
+            }
+            
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+        }
+        
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ffa8c5 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
+            z-index: 1000;
+        }
+        
+        .print-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 157, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <button class="print-button no-print" onclick="window.print()">🖨️ 打印/保存PDF</button>
+
+    <h1>Timesrui 网站修改完全教程</h1>
+    
+    <div class="toc">
+        <h2>📋 目录</h2>
+        <ul>
+            <li><a href="#files">1. 文件说明</a></li>
+            <li><a href="#tools">2. 修改工具</a></li>
+            <li><a href="#operations">3. 常见修改操作</a></li>
+            <li><a href="#workflow">4. 修改流程</a></li>
+            <li><a href="#faq">5. 常见问题</a></li>
+            <li><a href="#reference">6. 快速参考</a></li>
+        </ul>
+    </div>
+
+    <h2 id="files">📁 文件说明</h2>
+    
+    <div class="box info">
+        <strong>文件位置：</strong><code>C:\Users\apple\.easyclaw\workspace\resin-website\</code>
+    </div>
+
+    <h3>文件结构</h3>
+    <pre><code>resin-website/
+├── index.html          # 网页内容（文字、图片、布局）
+├── style.css           # 网页样式（颜色、大小、字体）
+├── script.js           # 网页交互（按钮、动画、功能）
+├── logo-original.png   # 公司Logo
+└── README.md          # 说明文档</code></pre>
+
+    <h3>各文件作用</h3>
+    
+    <h4>1. index.html - 网页内容</h4>
+    <ul>
+        <li>包含所有文字内容</li>
+        <li>产品信息、标题、描述</li>
+        <li>图片链接</li>
+        <li>页面布局结构</li>
+    </ul>
+
+    <h4>2. style.css - 网页样式</h4>
+    <ul>
+        <li>颜色配置（粉色、绿色等）</li>
+        <li>字体大小、样式</li>
+        <li>元素间距、圆角</li>
+        <li>阴影、动画效果</li>
+    </ul>
+
+    <h4>3. script.js - 网页交互</h4>
+    <ul>
+        <li>按钮点击效果</li>
+        <li>购物车计数</li>
+        <li>通知提示</li>
+        <li>滚动动画</li>
+    </ul>
+
+    <h2 id="tools">🛠️ 修改工具</h2>
+
+    <h3>方案A：VS Code（强烈推荐）✅</h3>
+    
+    <div class="box success">
+        <strong>优点：</strong>
+        <ul>
+            <li>免费、专业</li>
+            <li>语法高亮，容易找到要改的地方</li>
+            <li>实时预览</li>
+            <li>不容易出错</li>
+        </ul>
+    </div>
+
+    <p><strong>下载地址：</strong> <code>https://code.visualstudio.com/</code></p>
+
+    <h4>使用方法</h4>
+    <ol>
+        <li>下载安装 VS Code</li>
+        <li>打开软件</li>
+        <li>点击 "文件" → "打开文件夹"</li>
+        <li>选择 <code>C:\Users\apple\.easyclaw\workspace\resin-website</code></li>
+        <li>左侧会显示所有文件</li>
+        <li>点击文件即可编辑</li>
+        <li><code>Ctrl+S</code> 保存</li>
+    </ol>
+
+    <h3>方案B：记事本</h3>
+    <p><strong>适用场景：</strong> 简单文字修改</p>
+    
+    <ol>
+        <li>找到要修改的文件（如 <code>index.html</code>）</li>
+        <li>右键 → 打开方式 → 记事本</li>
+        <li>修改内容</li>
+        <li>文件 → 保存</li>
+    </ol>
+
+    <div class="box warning">
+        ⚠️ <strong>注意：</strong> 记事本容易看花眼，不推荐大量修改
+    </div>
+
+    <h3>方案C：让AI助手帮你改</h3>
+    <p>直接告诉我要修改什么，我来帮你改代码！</p>
+
+    <h2 id="operations">✏️ 常见修改操作</h2>
+
+    <h3>1. 修改文字内容</h3>
+    <p><strong>位置：</strong> <code>index.html</code></p>
+
+    <h4>示例1：修改首页大标题</h4>
+    <p><strong>找到这段代码：</strong></p>
+    <pre><code>&lt;h2 class="hero-title"&gt;✨ Create Your Own Magic ✨&lt;/h2&gt;
+&lt;p class="hero-subtitle"&gt;Premium DIY resin supplies for crafters, artists & dreamers 💕&lt;/p&gt;</code></pre>
+
+    <p><strong>修改成你想要的：</strong></p>
+    <pre><code>&lt;h2 class="hero-title"&gt;✨ 创造你的专属艺术 ✨&lt;/h2&gt;
+&lt;p class="hero-subtitle"&gt;专业树脂材料，让创意触手可及 💕&lt;/p&gt;</code></pre>
+
+    <h3>2. 修改颜色</h3>
+    <p><strong>位置：</strong> <code>style.css</code></p>
+
+    <h4>当前配色方案</h4>
+    <ul>
+        <li>主色：粉红色 <code>#ff6b9d</code></li>
+        <li>辅助色：浅粉 <code>#ffa8c5</code></li>
+    </ul>
+
+    <h4>方法1：全局替换（推荐）</h4>
+    <p>在 VS Code 中：</p>
+    <ol>
+        <li>按 <code>Ctrl+H</code>（查找替换）</li>
+        <li>查找：<code>#ff6b9d</code></li>
+        <li>替换为：你想要的颜色（如蓝色 <code>#4a90e2</code>）</li>
+        <li>点击"全部替换"</li>
+    </ol>
+
+    <h4>常用颜色代码参考</h4>
+    <table>
+        <tr>
+            <th>颜色</th>
+            <th>代码</th>
+        </tr>
+        <tr>
+            <td>粉红色</td>
+            <td><code>#ff6b9d</code></td>
+        </tr>
+        <tr>
+            <td>蓝色</td>
+            <td><code>#4a90e2</code></td>
+        </tr>
+        <tr>
+            <td>绿色</td>
+            <td><code>#2d7a3e</code></td>
+        </tr>
+        <tr>
+            <td>紫色</td>
+            <td><code>#9c27b0</code></td>
+        </tr>
+        <tr>
+            <td>橙色</td>
+            <td><code>#ff9800</code></td>
+        </tr>
+    </table>
+
+    <h3>3. 修改产品价格</h3>
+    <p><strong>找到：</strong></p>
+    <pre><code>&lt;div class="product-price"&gt;
+    &lt;span class="price"&gt;$29.99&lt;/span&gt;
+    &lt;span class="original-price"&gt;$39.99&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+
+    <p><strong>修改成：</strong></p>
+    <pre><code>&lt;div class="product-price"&gt;
+    &lt;span class="price"&gt;¥199&lt;/span&gt;
+    &lt;span class="original-price"&gt;¥299&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+
+    <h3>4. 更换产品图片</h3>
+    
+    <h4>步骤1：准备图片</h4>
+    <ol>
+        <li>把产品图片放到 <code>resin-website</code> 文件夹</li>
+        <li>建议命名：<code>product-1.jpg</code>, <code>product-2.jpg</code> 等</li>
+        <li>推荐尺寸：800x800 像素</li>
+    </ol>
+
+    <h4>步骤2：修改代码</h4>
+    <p><strong>原来（渐变色背景）：</strong></p>
+    <pre><code>&lt;div class="product-image" style="background: linear-gradient(...);"&gt;
+    &lt;span style="font-size: 64px;"&gt;💎&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+
+    <p><strong>改成真实图片：</strong></p>
+    <pre><code>&lt;div class="product-image"&gt;
+    &lt;img src="product-1.jpg" alt="产品名称" 
+         style="width:100%; height:100%; object-fit:cover;"&gt;
+&lt;/div&gt;</code></pre>
+
+    <h3>5. 修改Logo</h3>
+    
+    <h4>方法1：替换图片文件</h4>
+    <ol>
+        <li>准备新logo图片（PNG格式，透明背景最佳）</li>
+        <li>重命名为 <code>logo-original.png</code></li>
+        <li>替换掉原来的文件</li>
+    </ol>
+
+    <h4>调整Logo大小</h4>
+    <p>在 <code>style.css</code> 中找到：</p>
+    <pre><code>.logo-img {
+    height: 60px;
+    width: auto;
+}</code></pre>
+
+    <p>修改高度：</p>
+    <pre><code>.logo-img {
+    height: 80px;  /* 改成你想要的高度 */
+    width: auto;
+}</code></pre>
+
+    <h2 id="workflow">🔄 修改流程（重要！）</h2>
+
+    <div class="box warning">
+        <h3>⚠️ 第1步：备份文件（每次修改前必做！）</h3>
+        <ol>
+            <li>找到文件夹：<code>C:\Users\apple\.easyclaw\workspace\resin-website</code></li>
+            <li>复制整个文件夹</li>
+            <li>粘贴到同一位置</li>
+            <li>重命名为：<code>resin-website-backup-日期</code></li>
+        </ol>
+    </div>
+
+    <h3>第2步：修改文件</h3>
+    <ol>
+        <li>用 VS Code 或记事本打开要修改的文件</li>
+        <li>按照上面的示例进行修改</li>
+        <li>保存文件（<code>Ctrl+S</code>）</li>
+    </ol>
+
+    <h3>第3步：查看效果</h3>
+    <ol>
+        <li>双击 <code>index.html</code>，用浏览器打开</li>
+        <li>按 <code>Ctrl+F5</code> 强制刷新（清除缓存）</li>
+        <li>查看修改效果</li>
+    </ol>
+
+    <h3>第4步：确认无误</h3>
+    <ul>
+        <li>检查所有页面是否正常</li>
+        <li>测试按钮是否能点击</li>
+        <li>检查文字是否显示正确</li>
+        <li>查看颜色是否符合预期</li>
+    </ul>
+
+    <h3>第5步：如果改坏了</h3>
+    <ol>
+        <li>删除当前的 <code>resin-website</code> 文件夹</li>
+        <li>把备份的文件夹重命名回 <code>resin-website</code></li>
+        <li>重新开始修改</li>
+    </ol>
+
+    <h2 id="faq">❓ 常见问题</h2>
+
+    <h3>Q1: 修改后刷新浏览器看不到变化？</h3>
+    <div class="box">
+        <strong>解决方法：</strong>
+        <ul>
+            <li>按 <code>Ctrl+F5</code> 强制刷新（清除缓存）</li>
+            <li>或者按 <code>Ctrl+Shift+Delete</code> 清除浏览器缓存</li>
+        </ul>
+    </div>
+
+    <h3>Q2: 修改后页面显示乱了？</h3>
+    <div class="box">
+        <strong>原因：</strong> 可能不小心删除了重要代码
+        <br><br>
+        <strong>解决方法：</strong>
+        <ol>
+            <li>从备份恢复文件</li>
+            <li>仔细检查修改的地方，确保没有删除 <code>&lt;</code> <code>&gt;</code> <code>{</code> <code>}</code> 等符号</li>
+        </ol>
+    </div>
+
+    <h3>Q3: 中文显示乱码？</h3>
+    <div class="box">
+        <strong>解决方法：</strong>
+        <p>在 <code>index.html</code> 顶部确认有这行代码：</p>
+        <pre><code>&lt;meta charset="UTF-8"&gt;</code></pre>
+        <p>用记事本保存时选择 "UTF-8" 编码。</p>
+    </div>
+
+    <h3>Q4: 图片不显示？</h3>
+    <div class="box">
+        <strong>检查项：</strong>
+        <ol>
+            <li>图片文件是否在 <code>resin-website</code> 文件夹里？</li>
+            <li>文件名是否写对了？（区分大小写）</li>
+            <li>文件格式是否支持？（推荐 <code>.jpg</code> <code>.png</code>）</li>
+        </ol>
+    </div>
+
+    <h2 id="reference">🎯 快速参考</h2>
+
+    <h3>常用修改位置速查表</h3>
+    <table>
+        <tr>
+            <th>要修改的内容</th>
+            <th>文件</th>
+            <th>搜索关键词</th>
+        </tr>
+        <tr>
+            <td>首页标题</td>
+            <td>index.html</td>
+            <td><code>hero-title</code></td>
+        </tr>
+        <tr>
+            <td>产品名称</td>
+            <td>index.html</td>
+            <td><code>&lt;h3&gt;</code></td>
+        </tr>
+        <tr>
+            <td>产品价格</td>
+            <td>index.html</td>
+            <td><code>price</code></td>
+        </tr>
+        <tr>
+            <td>按钮颜色</td>
+            <td>style.css</td>
+            <td><code>.btn-</code></td>
+        </tr>
+        <tr>
+            <td>主题色</td>
+            <td>style.css</td>
+            <td><code>#ff6b9d</code></td>
+        </tr>
+        <tr>
+            <td>Logo</td>
+            <td>index.html</td>
+            <td><code>logo-original.png</code></td>
+        </tr>
+        <tr>
+            <td>公司信息</td>
+            <td>index.html</td>
+            <td><code>footer</code></td>
+        </tr>
+    </table>
+
+    <h2>✅ 修改检查清单</h2>
+    
+    <div class="box success">
+        <p>每次修改完成后，检查：</p>
+        <ul>
+            <li>☐ 所有页面能正常打开</li>
+            <li>☐ 文字显示正常，无乱码</li>
+            <li>☐ 图片能正常显示</li>
+            <li>☐ 按钮能正常点击</li>
+            <li>☐ 颜色符合预期</li>
+            <li>☐ 在手机上也能正常显示</li>
+            <li>☐ 已创建备份</li>
+        </ul>
+    </div>
+
+    <h2>📞 需要帮助？</h2>
+    
+    <div class="box info">
+        <p>遇到问题时：</p>
+        <ol>
+            <li>先检查备份是否存在</li>
+            <li>从备份恢复文件</li>
+            <li>询问AI助手（大龙虾 🦞）</li>
+            <li>提供具体的错误信息或截图</li>
+        </ol>
+    </div>
+
+    <div class="footer">
+        <p><strong>最后更新：</strong> 2026年3月5日</p>
+        <p><strong>版本：</strong> v1.0</p>
+        <p><strong>制作：</strong> 大龙虾 AI助手 🦞</p>
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
+        <p style="font-size: 18px; font-weight: bold; color: #ff6b9d;">⚠️ 记住：永远先备份，再修改！🔒</p>
+    </div>
+
+</body>
+</html>
