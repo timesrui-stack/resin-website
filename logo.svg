@@ -1,35 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240">
-  <!-- Green circular pattern - matching original logo -->
-  <circle cx="100" cy="90" r="75" fill="none" stroke="#228B22" stroke-width="3"/>
-  <circle cx="100" cy="90" r="70" fill="none" stroke="#228B22" stroke-width="1.5"/>
-  
-  <!-- Decorative swirl pattern inside circle - simplified organic design -->
-  <g fill="none" stroke="#228B22" stroke-width="2.5" stroke-linecap="round">
-    <!-- Top decorative swirls -->
-    <path d="M 85 55 Q 80 60, 82 67 Q 84 74, 90 76"/>
-    <path d="M 115 55 Q 120 60, 118 67 Q 116 74, 110 76"/>
-    
-    <!-- Left side organic curves -->
-    <path d="M 55 75 Q 48 80, 50 88 Q 52 96, 60 100"/>
-    <path d="M 52 100 Q 45 105, 47 113 Q 49 121, 57 124"/>
-    
-    <!-- Right side organic curves -->
-    <path d="M 145 75 Q 152 80, 150 88 Q 148 96, 140 100"/>
-    <path d="M 148 100 Q 155 105, 153 113 Q 151 121, 143 124"/>
-    
-    <!-- Center decorative elements -->
-    <circle cx="70" cy="85" r="7" fill="none" stroke="#228B22" stroke-width="2"/>
-    <circle cx="130" cy="85" r="7" fill="none" stroke="#228B22" stroke-width="2"/>
-    <circle cx="100" cy="110" r="5" fill="none" stroke="#228B22" stroke-width="2"/>
-    
-    <!-- Bottom connecting curves -->
-    <path d="M 75 125 Q 87 132, 100 133"/>
-    <path d="M 125 125 Q 113 132, 100 133"/>
-    
-    <!-- Additional decorative detail -->
-    <path d="M 100 65 Q 100 80, 100 95"/>
-  </g>
-  
-  <!-- Company name TIMESRUI below the circle -->
-  <text x="100" y="200" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#228B22">TIMESRUI</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 260">
+  <defs>
+    <style>
+      .green { fill: none; stroke: #228B22; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+      .fill-green { fill: #228B22; }
+      .text { font-family: Arial, 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif; font-weight: 900; fill: #111; }
+    </style>
+  </defs>
+
+  <!-- Circular emblem -->
+  <circle cx="110" cy="92" r="72" class="green" />
+  <circle cx="110" cy="92" r="64" class="green" stroke-width="2" />
+
+  <!-- Stylized swirl / monogram -->
+  <path class="green" d="M86 56c-11 0-18 8-18 18 0 12 10 18 20 18 12 0 20-7 20-18 0-14-12-24-26-24z" opacity="0.95"/>
+  <path class="green" d="M132 56c11 0 18 8 18 18 0 12-10 18-20 18-12 0-20-7-20-18 0-14 12-24 26-24z" opacity="0.95"/>
+  <path class="green" d="M76 104c9-16 28-22 42-13 9 6 12 17 8 27-5 12-18 17-30 14-14-3-23-15-20-28z" opacity="0.95"/>
+  <path class="green" d="M144 104c-9-16-28-22-42-13-9 6-12 17-8 27 5 12 18 17 30 14 14-3 23-15 20-28z" opacity="0.95"/>
+
+  <!-- Inner accent curves -->
+  <path class="green" d="M110 47c0 15-12 25-24 28" stroke-width="3"/>
+  <path class="green" d="M110 47c0 15 12 25 24 28" stroke-width="3"/>
+  <path class="green" d="M93 88c8-6 18-6 27 0" stroke-width="3"/>
+  <path class="green" d="M87 111c7 8 19 10 28 5" stroke-width="3"/>
+
+  <!-- Bottom brand text -->
+  <text x="110" y="220" font-size="42" text-anchor="middle" class="text">台瑞</text>
 </svg>

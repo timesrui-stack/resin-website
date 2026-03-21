@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timesrui Resin 可视化编辑器</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body{margin:0;background:#eef2f7;font-family:'Poppins',sans-serif}
+    .shell{display:grid;grid-template-columns:360px 1fr;min-height:100vh}
+    .panel{background:#fff;border-right:1px solid #e5e7eb;padding:16px;position:sticky;top:0;height:100vh;overflow:auto}
+    .panel h1{font-size:20px;margin:0 0 10px}
+    .hint{font-size:13px;line-height:1.6;color:#6b7280;margin-bottom:12px}
+    .group{margin-bottom:12px}
+    .group label{display:block;font-size:13px;font-weight:700;color:#1f2937;margin-bottom:6px}
+    .group input,.group textarea,.group select{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;box-sizing:border-box}
+    .group textarea{min-height:72px;resize:vertical}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+    .btn{border:0;border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:700}
+    .btn.primary{background:#ff6b9d;color:#fff}
+    .btn.secondary{background:#e5e7eb;color:#111}
+    .btn.success{background:#16a34a;color:#fff}
+    .btn.danger{background:#dc2626;color:#fff}
+    .section{border-top:1px solid #eee;padding-top:14px;margin-top:14px}
+    .list{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow:auto}
+    .item{border:1px solid #e5e7eb;border-radius:12px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .item .meta{min-width:0}
+    .item .title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+    .item .sub{font-size:12px;color:#6b7280}
+    .item .tools{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
+    .mini-btn{border:0;border-radius:8px;padding:6px 8px;cursor:pointer;font-size:12px;font-weight:700}
+    .mini-btn.edit{background:#dbeafe;color:#1d4ed8}.mini-btn.del{background:#fee2e2;color:#b91c1c}.mini-btn.up,.mini-btn.down{background:#f3f4f6;color:#111}
+    .preview{background:#fff;position:relative}
+    .topbar{background:#111827;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:0;z-index:10;flex-wrap:wrap}
+    .toggle{display:inline-flex;align-items:center;gap:8px;background:#374151;color:#fff;padding:8px 12px;border-radius:999px;font-size:13px;cursor:pointer;border:0}
+    .toggle.on{background:#ec4899}
+    .status{font-size:13px;opacity:.88}
+    iframe{width:100%;height:calc(100vh - 50px);border:0;display:block}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:9999;padding:16px}
+    .overlay.show{display:flex}
+    .modal{width:min(760px,100%);background:#fff;border-radius:18px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.35);max-height:90vh;overflow:auto}
+    .modal h3{margin:0 0 8px}
+    .modal p{margin:0 0 12px;color:#555;font-size:14px;line-height:1.55}
+    .modal .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .modal .row-1{display:grid;grid-template-columns:1fr;gap:10px}
+    .modal input,.modal textarea,.modal select{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;box-sizing:border-box}
+    .modal textarea{min-height:120px;resize:vertical}
+    .modal .actions{justify-content:flex-end}
+    .small{font-size:12px;color:#6b7280;margin-top:8px}
+    .tag{display:inline-block;background:#ec4899;color:#fff;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700}
+    .preview-editable{outline:2px dashed transparent;outline-offset:3px;cursor:pointer;transition:outline-color .2s,box-shadow .2s}
+    .preview-editable:hover,.preview-editing .preview-editable{outline-color:#ff6b9d;box-shadow:0 0 0 4px rgba(255,107,157,.08)}
+    .card-tip{position:absolute;left:10px;top:10px;background:rgba(17,24,39,.9);color:#fff;border-radius:999px;padding:5px 10px;font-size:12px;z-index:6;pointer-events:none}
+    .muted{color:#6b7280}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <strong>Timesrui Resin 可视化编辑器</strong>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="toggle on" id="toggleEdit">编辑模式：开</button>
+      <span class="status">点击预览中的文字/图片/产品卡片即可修改；支持新增、删除、上传图片、上下排序、自动保存</span>
+    </div>
+  </div>
+
+  <div class="shell">
+    <aside class="panel">
+      <h1>总控面板</h1>
+      <div class="hint">左侧是全局内容与产品管理。你在这里改完，右侧首页会自动同步。</div>
+
+      <div class="group"><label>浏览器标题</label><input id="siteTitle" type="text"></div>
+      <div class="group"><label>品牌名</label><input id="brandName" type="text"></div>
+      <div class="group"><label>LOGO 地址</label><input id="logoUrl" type="text"><div class="small">也可以在预览里直接点 LOGO 修改图片地址。</div></div>
+      <div class="group"><label>顶部公告</label><textarea id="announcement"></textarea></div>
+
+      <div class="group"><label>首页主标题</label><input id="heroTitle" type="text"></div>
+      <div class="group"><label>首页副标题</label><input id="heroSubtitle" type="text"></div>
+      <div class="group"><label>首页按钮</label><input id="heroBtn" type="text"></div>
+
+      <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="group"><label>主色</label><input id="primaryColor" type="color"></div>
+        <div class="group"><label>辅助色</label><input id="secondaryColor" type="color"></div>
+      </div>
+      <div class="group"><label>Hero 背景色</label><input id="heroBg" type="color"></div>
+
+      <div class="section">
+        <div class="actions">
+          <button class="btn primary" id="saveAll">保存全部</button>
+          <button class="btn secondary" id="resetAll">恢复默认</button>
+          <button class="btn success" id="exportJson">导出配置</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h1 style="font-size:18px;margin:0 0 10px">产品管理</h1>
+        <div class="actions">
+          <button class="btn primary" id="addProduct">+ 新增产品</button>
+          <button class="btn secondary" id="refreshPreview">刷新预览</button>
+        </div>
+        <div class="list" id="productList"></div>
+        <div class="small">提示：编辑、删除、上移、下移都支持。图片可上传；产品会自动同步到首页和目录页。</div>
+      </div>
+    </aside>
+
+    <main class="preview">
+      <iframe id="previewFrame" src="index.html"></iframe>
+    </main>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h3 id="modalTitle">编辑内容</h3>
+      <p id="modalDesc">修改选中的内容</p>
+      <div id="modalBody"></div>
+      <div class="actions">
+        <button class="btn secondary" id="cancelEdit">取消</button>
+        <button class="btn primary" id="confirmEdit">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'timesrui.visualEditor.products.v3';
+    const defaults = {
+      siteTitle:'Timesrui Resin - Premium Resin Art Supplies & Epoxy Kits',
+      brandName:'TIMESRUI',
+      logoUrl:'logo.svg',
+      announcement:'🎉 FREE SHIPPING on orders over $50 | 11+ Years Manufacturing Experience',
+      heroTitle:'✨ Create Your Own Magic ✨',
+      heroSubtitle:'Premium DIY resin supplies for crafters, artists & dreamers 💕',
+      heroBtn:'Start Creating 🎨',
+      primaryColor:'#ff6b9d',
+      secondaryColor:'#c06c84',
+      heroBg:'#ffeaa7',
+      products:[
+        {category:'Epoxy Resin', image:'images/AB Epoxy Resin.png', badge:'Best Seller ⭐', name:'AB Epoxy Resin', desc:'Crystal clear, UV resistant, 1:1 ratio', price:'$29.99', originalPrice:'$39.99'},
+        {category:'UV Resin', image:'images/UV Resin.jpg', badge:'New! 🎉', name:'UV Resin', desc:'Quick cure, instant results! Perfect for beginners', price:'$19.99', originalPrice:''},
+        {category:'Silicone Molds', image:'images/Silicone Molds.png', badge:'', name:'Silicone Molds', desc:'20 adorable designs, super easy!', price:'$24.99', originalPrice:''},
+        {category:'DIY Kits', image:'images/DIY Resin Kits.png', badge:'', name:'DIY Resin Starter Kit', desc:'Everything you need to start crafting!', price:'$34.99', originalPrice:''},
+        {category:'Pigments', image:'images/Pigments & Dyes.webp', badge:'Hot Sale 🔥', name:'Pigments & Dyes', desc:'24 vibrant colors, mica powder', price:'$16.99', originalPrice:'$24.99'},
+        {category:'Tools', image:'images/Glitters & Sparkles.png', badge:'', name:'Glitters & Sparkles', desc:'Make your resin art shine!', price:'$18.99', originalPrice:''},
+        {category:'Tools', image:'images/Dried Flowers.png', badge:'', name:'Dried Flowers', desc:'Natural dried flowers for beautiful resin art', price:'$12.99', originalPrice:''},
+        {category:'Tools', image:'images/Crafting Tools.png', badge:'', name:'Crafting Tools', desc:'Professional tools for perfect results', price:'$22.99', originalPrice:''}
+      ]
+    };
+
+    const state = loadState();
+    const frame = document.getElementById('previewFrame');
+    const overlay = document.getElementById('overlay');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalBody = document.getElementById('modalBody');
+    const confirmEdit = document.getElementById('confirmEdit');
+    const cancelEdit = document.getElementById('cancelEdit');
+    const productList = document.getElementById('productList');
+    const toggleEdit = document.getElementById('toggleEdit');
+    let active = null;
+    let editEnabled = true;
+
+    function cloneDefaults(){ return JSON.parse(JSON.stringify(defaults)); }
+    function loadState(){ try { return Object.assign(cloneDefaults(), JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')); } catch { return cloneDefaults(); } }
+    function persist(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function syncPanel(){ ['siteTitle','brandName','logoUrl','announcement','heroTitle','heroSubtitle','heroBtn','primaryColor','secondaryColor','heroBg'].forEach(k=>document.getElementById(k).value = state[k]); }
+    function bindPanel(){ ['siteTitle','brandName','logoUrl','announcement','heroTitle','heroSubtitle','heroBtn','primaryColor','secondaryColor','heroBg'].forEach(k=>{ document.getElementById(k).addEventListener('input', e=>{ state[k]=e.target.value; persist(); renderPreview(); }); }); }
+    function escapeHtml(s){ return String(s || '').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+    function fileToDataURL(file){ return new Promise((resolve,reject)=>{ const r = new FileReader(); r.onload = ()=>resolve(r.result); r.onerror = reject; r.readAsDataURL(file); }); }
+
+    function renderProductList(){
+      productList.innerHTML = '';
+      state.products.forEach((p, i)=>{
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <div class="meta">
+            <div class="title">${escapeHtml(p.name || '未命名产品')}</div>
+            <div class="sub">${escapeHtml(p.category || '未分类')} · ${escapeHtml(p.price || '')}${p.badge ? ' · ' + escapeHtml(p.badge) : ''}</div>
+          </div>
+          <div class="tools">
+            <button class="mini-btn edit" data-edit="${i}">编辑</button>
+            <button class="mini-btn up" data-up="${i}">上移</button>
+            <button class="mini-btn down" data-down="${i}">下移</button>
+            <button class="mini-btn del" data-del="${i}">删</button>
+          </div>
+        `;
+        productList.appendChild(div);
+      });
+      productList.querySelectorAll('[data-edit]').forEach(btn=>btn.addEventListener('click', ()=>openProductModal(Number(btn.dataset.edit))));
+      productList.querySelectorAll('[data-del]').forEach(btn=>btn.addEventListener('click', ()=>deleteProduct(Number(btn.dataset.del))));
+      productList.querySelectorAll('[data-up]').forEach(btn=>btn.addEventListener('click', ()=>moveProduct(Number(btn.dataset.up), -1)));
+      productList.querySelectorAll('[data-down]').forEach(btn=>btn.addEventListener('click', ()=>moveProduct(Number(btn.dataset.down), 1)));
+    }
+
+    function moveProduct(index, delta){
+      const next = index + delta;
+      if (next < 0 || next >= state.products.length) return;
+      const arr = state.products;
+      [arr[index], arr[next]] = [arr[next], arr[index]];
+      persist(); renderProductList(); renderPreview();
+    }
+
+    function renderPreview(){
+      const doc = frame.contentDocument;
+      if (!doc) return;
+      doc.title = state.siteTitle;
+      const logo = doc.querySelector('.logo-img'); if (logo) logo.src = state.logoUrl;
+      const ann = doc.querySelector('.announcement-bar'); if (ann) ann.textContent = state.announcement;
+      const hero = doc.querySelector('.hero'); if (hero) hero.style.background = `linear-gradient(135deg, ${state.heroBg} 0%, #fab1a0 100%)`;
+      const heroTitle = doc.querySelector('.hero-title'); if (heroTitle) heroTitle.textContent = state.heroTitle;
+      const heroSub = doc.querySelector('.hero-subtitle'); if (heroSub) heroSub.textContent = state.heroSubtitle;
+      const heroBtn = doc.querySelector('.hero .btn-primary'); if (heroBtn) heroBtn.textContent = state.heroBtn;
+      const footer = doc.querySelector('.footer-bottom p'); if (footer) footer.innerHTML = `&copy; 2026 ${escapeHtml(state.brandName)}. All rights reserved. | Custom Manufacturer | Fujian, China`;
+      const brand = doc.querySelector('.nav-logo h1, .logo-text h1'); if (brand) brand.textContent = state.brandName;
+      applyTheme(doc);
+      renderProducts(doc);
+      enableInlineEditing(doc);
+    }
+
+    function applyTheme(doc){
+      const old = doc.getElementById('ve-theme'); if (old) old.remove();
+      const s = doc.createElement('style'); s.id = 've-theme';
+      s.textContent = `
+        .announcement-bar{background:linear-gradient(135deg, ${state.primaryColor} 0%, ${state.secondaryColor} 100%) !important;}
+        .btn-primary,.btn-secondary,.nav-menu a[href*="editor.html"]{background:linear-gradient(135deg, ${state.primaryColor} 0%, ${state.secondaryColor} 100%) !important;}
+        .section-title,.badge h3,.price,.logo-text h1{background:linear-gradient(135deg, ${state.primaryColor} 0%, ${state.secondaryColor} 100%) !important;-webkit-background-clip:text !important;-webkit-text-fill-color:transparent !important;background-clip:text !important;}
+        .hero{background:linear-gradient(135deg, ${state.heroBg} 0%, #fab1a0 100%) !important;}
+        .preview-editable{outline:2px dashed transparent;outline-offset:3px;cursor:pointer}
+        .preview-editable:hover,.preview-editing .preview-editable{outline-color:${state.primaryColor};box-shadow:0 0 0 4px rgba(255,107,157,.08)}
+      `;
+      doc.head.appendChild(s);
+    }
+
+    function renderProducts(doc){
+      const grid = doc.querySelector('.products .product-grid'); if (!grid) return;
+      grid.innerHTML = '';
+      state.products.forEach((p, i)=>{
+        const card = doc.createElement('div');
+        card.className = 'product-card';
+        card.dataset.index = i;
+        card.innerHTML = `
+          ${p.badge ? `<div class="product-badge">${escapeHtml(p.badge)}</div>` : ''}
+          <div class="product-image"><img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}"></div>
+          <h3>${escapeHtml(p.name)}</h3>
+          <p class="product-desc">${escapeHtml(p.desc)}</p>
+          <div class="product-price">
+            <span class="price">${escapeHtml(p.price)}</span>
+            ${p.originalPrice ? `<span class="original-price">${escapeHtml(p.originalPrice)}</span>` : ''}
+          </div>
+          <button class="btn btn-secondary">Add to Cart 🛒</button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function enableInlineEditing(doc){
+      if (!editEnabled) return;
+      doc.body.classList.add('preview-editing');
+      const map = [
+        {sel: '.announcement-bar', key: 'announcement', type:'text', label:'编辑顶部公告'},
+        {sel: '.hero-title', key: 'heroTitle', type:'text', label:'编辑首页主标题'},
+        {sel: '.hero-subtitle', key: 'heroSubtitle', type:'text', label:'编辑首页副标题'},
+        {sel: '.hero .btn-primary', key: 'heroBtn', type:'text', label:'编辑首页按钮'},
+        {sel: '.logo-img', key: 'logoUrl', type:'image', label:'编辑 LOGO 图片'}
+      ];
+      map.forEach(m=>{
+        const el = doc.querySelector(m.sel);
+        if (!el || el.dataset.veBound) return;
+        el.dataset.veBound = '1';
+        el.classList.add('preview-editable');
+        el.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); openSimpleModal(m.label, m.type, state[m.key], v=>{ state[m.key]=v; persist(); syncPanel(); renderPreview(); }); }, true);
+      });
+      doc.querySelectorAll('.product-card').forEach(card=>{
+        if (card.dataset.veBound) return;
+        card.dataset.veBound = '1';
+        card.classList.add('preview-editable');
+        card.addEventListener('click', (e)=>{ if (e.target.closest('button')) return; e.preventDefault(); e.stopPropagation(); openProductModal(Number(card.dataset.index)); }, true);
+      });
+    }
+
+    function openSimpleModal(title, type, value, onSave){
+      active = {onSave};
+      modalTitle.textContent = title;
+      modalDesc.textContent = type === 'image' ? '请输入图片地址，或本地资源路径；保存后会立即同步到首页。' : '修改文本后保存。';
+      modalBody.innerHTML = '';
+      const field = document.createElement(type === 'text' ? 'textarea' : 'input');
+      if (type === 'image') field.type = 'text';
+      field.value = value || '';
+      modalBody.appendChild(field);
+      overlay.classList.add('show');
+    }
+
+    function openProductModal(index){
+      const p = state.products[index] || {category:'Tools', image:'',badge:'',name:'',desc:'',price:'',originalPrice:''};
+      active = {productIndex:index};
+      modalTitle.textContent = index >= state.products.length ? '新增产品' : `编辑产品 #${index + 1}`;
+      modalDesc.textContent = '可修改产品图片、标题、描述、价格、分类，并支持上传图片。';
+      modalBody.innerHTML = `
+        <div class="row">
+          <div class="group"><label>产品分类</label><input id="pCategory" type="text" value="${escapeHtml(p.category || 'Tools')}"></div>
+          <div class="group"><label>产品名称</label><input id="pName" type="text" value="${escapeHtml(p.name)}"></div>
+        </div>
+        <div class="row">
+          <div class="group"><label>价格</label><input id="pPrice" type="text" value="${escapeHtml(p.price)}"></div>
+          <div class="group"><label>原价（可空）</label><input id="pOriginal" type="text" value="${escapeHtml(p.originalPrice || '')}"></div>
+        </div>
+        <div class="row-1">
+          <div class="group"><label>角标（可空）</label><input id="pBadge" type="text" value="${escapeHtml(p.badge || '')}"></div>
+          <div class="group"><label>描述</label><textarea id="pDesc">${escapeHtml(p.desc)}</textarea></div>
+          <div class="group"><label>图片地址</label><input id="pImage" type="text" value="${escapeHtml(p.image)}"></div>
+          <div class="group"><label>上传图片</label><input id="pFile" type="file" accept="image/*"></div>
+          <div class="small muted">上传后会直接保存为 base64 到本地配置，刷新不丢失。</div>
+        </div>
+      `;
+      overlay.classList.add('show');
+      const file = document.getElementById('pFile');
+      file.addEventListener('change', async ()=>{
+        const f = file.files && file.files[0]; if (!f) return;
+        const url = await fileToDataURL(f);
+        document.getElementById('pImage').value = url;
+      }, {once:true});
+    }
+
+    confirmEdit.addEventListener('click', ()=>{
+      if (!active) return;
+      if (active.onSave){
+        const field = modalBody.querySelector('input,textarea');
+        active.onSave(field ? field.value : '');
+      } else if (typeof active.productIndex === 'number') {
+        const p = {
+          category: document.getElementById('pCategory').value.trim() || 'Tools',
+          name: document.getElementById('pName').value.trim(),
+          price: document.getElementById('pPrice').value.trim(),
+          originalPrice: document.getElementById('pOriginal').value.trim(),
+          badge: document.getElementById('pBadge').value.trim(),
+          desc: document.getElementById('pDesc').value.trim(),
+          image: document.getElementById('pImage').value.trim()
+        };
+        if (active.productIndex >= state.products.length) state.products.push(p);
+        else state.products[active.productIndex] = p;
+        persist(); renderProductList(); renderPreview();
+      }
+      overlay.classList.remove('show');
+      active = null;
+    });
+    cancelEdit.addEventListener('click', ()=>overlay.classList.remove('show'));
+    overlay.addEventListener('click', e=>{ if (e.target === overlay) overlay.classList.remove('show'); });
+
+    function deleteProduct(index){ if (!confirm(`确定删除第 ${index+1} 个产品吗？`)) return; state.products.splice(index, 1); persist(); renderProductList(); renderPreview(); }
+
+    document.getElementById('saveAll').addEventListener('click', ()=>{ persist(); renderPreview(); });
+    document.getElementById('resetAll').addEventListener('click', ()=>{ Object.assign(state, cloneDefaults()); persist(); syncPanel(); renderProductList(); renderPreview(); });
+    document.getElementById('exportJson').addEventListener('click', ()=>{ const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'timesrui-config.json'; a.click(); });
+    document.getElementById('addProduct').addEventListener('click', ()=>openProductModal(state.products.length));
+    document.getElementById('refreshPreview').addEventListener('click', renderPreview);
+    toggleEdit.addEventListener('click', ()=>{ editEnabled = !editEnabled; toggleEdit.textContent = `编辑模式：${editEnabled ? '开' : '关'}`; toggleEdit.classList.toggle('on', editEnabled); const doc = frame.contentDocument; if (doc) doc.body.classList.toggle('preview-editing', editEnabled); });
+
+    bindPanel(); syncPanel(); renderProductList(); frame.addEventListener('load', renderPreview); if (frame.contentDocument && frame.contentDocument.readyState === 'complete') renderPreview();
+  </script>
+</body>
+</html>

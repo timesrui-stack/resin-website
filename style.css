@@ -51,8 +51,9 @@ body {
 }
 
 .logo-img {
-    height: 60px;
+    height: 72px;
     width: auto;
+    display: block;
 }
 
 .logo-text h1 {
@@ -87,6 +88,18 @@ body {
 
 .nav-menu a:hover {
     color: #ff6b9d;
+}
+
+.nav-menu a[href*="editor.html"] {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+    color: white;
+}
+
+.nav-menu a[href*="editor.html"]:hover {
+    color: white;
+    transform: translateY(-1px);
 }
 
 .nav-icons {
