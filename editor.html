@@ -121,6 +121,9 @@
 
   <script>
     const STORAGE_KEY = 'timesrui.visualEditor.products.v3';
+    const CLOUD_BIN_ID = '69be28b8b7ec241ddc8aa19e';
+    const CLOUD_API_KEY = '$2a$10$jUWgRLevF9MiHDB7l5qgZemlf42Vp3UI4RMuz7ZDUmRTHBc698mP2';
+    const CLOUD_URL = `https://api.jsonbin.io/v3/b/${CLOUD_BIN_ID}`;
     const defaults = {
       siteTitle:'Timesrui Resin - Premium Resin Art Supplies & Epoxy Kits',
       brandName:'TIMESRUI',
@@ -160,8 +163,66 @@
     function cloneDefaults(){ return JSON.parse(JSON.stringify(defaults)); }
     function loadState(){ try { return Object.assign(cloneDefaults(), JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')); } catch { return cloneDefaults(); } }
     function persist(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+    // 云端同步
+    let cloudSyncing = false;
+    let cloudSaveTimer = null;
+
+    function showCloudStatus(msg, color='#16a34a'){
+      let bar = document.getElementById('cloud-status');
+      if (!bar){ bar = document.createElement('div'); bar.id='cloud-status'; bar.style.cssText='position:fixed;bottom:20px;right:20px;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;z-index:99999;transition:opacity .4s;box-shadow:0 4px 15px rgba(0,0,0,.2)'; document.body.appendChild(bar); }
+      bar.style.background = color; bar.style.color = '#fff'; bar.textContent = msg; bar.style.opacity = '1';
+      clearTimeout(bar._t); bar._t = setTimeout(()=>bar.style.opacity='0', 3000);
+    }
+
+    async function cloudSave(){
+      if (cloudSyncing) return;
+      cloudSyncing = true;
+      showCloudStatus('☁️ 正在保存到云端...', '#f59e0b');
+      try {
+        const res = await fetch(`${CLOUD_URL}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'X-Master-Key': CLOUD_API_KEY },
+          body: JSON.stringify(state)
+        });
+        if (!res.ok) throw new Error('保存失败');
+        showCloudStatus('✅ 已同步到云端', '#16a34a');
+      } catch(e) {
+        showCloudStatus('❌ 云端保存失败，数据已保存在本地', '#dc2626');
+      } finally { cloudSyncing = false; }
+    }
+
+    async function cloudLoad(){
+      showCloudStatus('☁️ 正在从云端加载...', '#f59e0b');
+      try {
+        const res = await fetch(`${CLOUD_URL}/latest`, {
+          headers: { 'X-Master-Key': CLOUD_API_KEY }
+        });
+        if (!res.ok) throw new Error('加载失败');
+        const json = await res.json();
+        const data = json.record;
+        if (data && Object.keys(data).length > 2) {
+          Object.assign(state, data);
+          persist();
+          syncPanel();
+          renderProductList();
+          renderPreview();
+          showCloudStatus('✅ 云端数据已加载', '#16a34a');
+        } else {
+          showCloudStatus('📦 云端暂无数据，使用本地配置', '#6b7280');
+        }
+      } catch(e) {
+        showCloudStatus('⚠️ 云端加载失败，使用本地配置', '#f59e0b');
+      }
+    }
+
+    function persistAndCloudSave(){
+      persist();
+      clearTimeout(cloudSaveTimer);
+      cloudSaveTimer = setTimeout(cloudSave, 1500);
+    }
     function syncPanel(){ ['siteTitle','brandName','logoUrl','announcement','heroTitle','heroSubtitle','heroBtn','primaryColor','secondaryColor','heroBg'].forEach(k=>document.getElementById(k).value = state[k]); }
-    function bindPanel(){ ['siteTitle','brandName','logoUrl','announcement','heroTitle','heroSubtitle','heroBtn','primaryColor','secondaryColor','heroBg'].forEach(k=>{ document.getElementById(k).addEventListener('input', e=>{ state[k]=e.target.value; persist(); renderPreview(); }); }); }
+    function bindPanel(){ ['siteTitle','brandName','logoUrl','announcement','heroTitle','heroSubtitle','heroBtn','primaryColor','secondaryColor','heroBg'].forEach(k=>{ document.getElementById(k).addEventListener('input', e=>{ state[k]=e.target.value; persistAndCloudSave(); renderPreview(); }); }); }
     function escapeHtml(s){ return String(s || '').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
     function fileToDataURL(file){ return new Promise((resolve,reject)=>{ const r = new FileReader(); r.onload = ()=>resolve(r.result); r.onerror = reject; r.readAsDataURL(file); }); }
 
@@ -195,7 +256,7 @@
       if (next < 0 || next >= state.products.length) return;
       const arr = state.products;
       [arr[index], arr[next]] = [arr[next], arr[index]];
-      persist(); renderProductList(); renderPreview();
+      persistAndCloudSave(); renderProductList(); renderPreview();
     }
 
     function renderPreview(){
@@ -336,7 +397,7 @@
         };
         if (active.productIndex >= state.products.length) state.products.push(p);
         else state.products[active.productIndex] = p;
-        persist(); renderProductList(); renderPreview();
+        persistAndCloudSave(); renderProductList(); renderPreview();
       }
       overlay.classList.remove('show');
       active = null;
@@ -344,16 +405,20 @@
     cancelEdit.addEventListener('click', ()=>overlay.classList.remove('show'));
     overlay.addEventListener('click', e=>{ if (e.target === overlay) overlay.classList.remove('show'); });
 
-    function deleteProduct(index){ if (!confirm(`确定删除第 ${index+1} 个产品吗？`)) return; state.products.splice(index, 1); persist(); renderProductList(); renderPreview(); }
+    function deleteProduct(index){ if (!confirm(`确定删除第 ${index+1} 个产品吗？`)) return; state.products.splice(index, 1); persistAndCloudSave(); renderProductList(); renderPreview(); }
 
-    document.getElementById('saveAll').addEventListener('click', ()=>{ persist(); renderPreview(); });
-    document.getElementById('resetAll').addEventListener('click', ()=>{ Object.assign(state, cloneDefaults()); persist(); syncPanel(); renderProductList(); renderPreview(); });
+    document.getElementById('saveAll').addEventListener('click', ()=>{ persistAndCloudSave(); renderPreview(); showCloudStatus('☁️ 正在同步...', '#f59e0b'); });
+    document.getElementById('resetAll').addEventListener('click', ()=>{ Object.assign(state, cloneDefaults()); persistAndCloudSave(); syncPanel(); renderProductList(); renderPreview(); });
     document.getElementById('exportJson').addEventListener('click', ()=>{ const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'timesrui-config.json'; a.click(); });
     document.getElementById('addProduct').addEventListener('click', ()=>openProductModal(state.products.length));
     document.getElementById('refreshPreview').addEventListener('click', renderPreview);
     toggleEdit.addEventListener('click', ()=>{ editEnabled = !editEnabled; toggleEdit.textContent = `编辑模式：${editEnabled ? '开' : '关'}`; toggleEdit.classList.toggle('on', editEnabled); const doc = frame.contentDocument; if (doc) doc.body.classList.toggle('preview-editing', editEnabled); });
 
-    bindPanel(); syncPanel(); renderProductList(); frame.addEventListener('load', renderPreview); if (frame.contentDocument && frame.contentDocument.readyState === 'complete') renderPreview();
+    bindPanel(); syncPanel(); renderProductList();
+    frame.addEventListener('load', renderPreview);
+    if (frame.contentDocument && frame.contentDocument.readyState === 'complete') renderPreview();
+    // 启动时从云端加载最新数据
+    cloudLoad();
   </script>
 </body>
 </html>
