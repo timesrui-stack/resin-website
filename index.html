@@ -65,8 +65,9 @@
     .cat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
     .cat-card{text-align:center;cursor:pointer;text-decoration:none;color:inherit;transition:transform .2s}
     .cat-card:hover{transform:translateY(-4px)}
-    .cat-img{width:100%;aspect-ratio:1;border-radius:12px;overflow:hidden;margin-bottom:12px;background:#f5f5f5;display:flex;align-items:center;justify-content:center}
-    .cat-img img{width:100%;height:100%;object-fit:cover}
+    .cat-img{width:100%;aspect-ratio:1;border-radius:12px;overflow:hidden;margin-bottom:12px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;position:relative}
+    .cat-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+    .cat-card:hover .cat-img img{transform:scale(1.07)}
     .cat-img .cat-emoji{font-size:40px}
     .cat-card h3{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
     .cat-card p{font-size:12px;color:#888}
@@ -232,27 +233,27 @@
     </div>
     <div class="cat-grid" id="catGrid">
       <a href="catalog.html#epoxy-resin" class="cat-card">
-        <div class="cat-img" style="background:#e8f5e9"><span class="cat-emoji">💧</span></div>
+        <div class="cat-img"><img src="images/AB Epoxy Resin.png" alt="Epoxy Resin"></div>
         <h3>Epoxy Resin</h3><p>Crystal clear art</p>
       </a>
       <a href="catalog.html#uv-resin" class="cat-card">
-        <div class="cat-img" style="background:#fff3e0"><span class="cat-emoji">☀️</span></div>
+        <div class="cat-img"><img src="images/UV Resin.jpg" alt="UV Resin"></div>
         <h3>UV Resin</h3><p>Quick cure results</p>
       </a>
       <a href="catalog.html#silicone-molds" class="cat-card">
-        <div class="cat-img" style="background:#fce4ec"><span class="cat-emoji">🧁</span></div>
+        <div class="cat-img"><img src="images/Silicone Molds.png" alt="Silicone Molds"></div>
         <h3>Silicone Molds</h3><p>Endless creativity</p>
       </a>
       <a href="catalog.html#diy-kits" class="cat-card">
-        <div class="cat-img" style="background:#ede7f6"><span class="cat-emoji">🎁</span></div>
+        <div class="cat-img"><img src="images/DIY Resin Kits.png" alt="DIY Kits"></div>
         <h3>DIY Kits</h3><p>Everything to start</p>
       </a>
       <a href="catalog.html#pigments" class="cat-card">
-        <div class="cat-img" style="background:#fff8e1"><span class="cat-emoji">🎨</span></div>
+        <div class="cat-img"><img src="images/Pigments & Dyes.webp" alt="Pigments"></div>
         <h3>Pigments</h3><p>Rainbow colors</p>
       </a>
       <a href="catalog.html#diy-tools" class="cat-card">
-        <div class="cat-img" style="background:#e0f7fa"><span class="cat-emoji">✨</span></div>
+        <div class="cat-img"><img src="images/Crafting Tools.png" alt="DIY Tools"></div>
         <h3>DIY Tools</h3><p>Pro results</p>
       </a>
     </div>
