@@ -51,7 +51,10 @@
     .preview-editable{outline:2px dashed transparent;outline-offset:3px;cursor:pointer;transition:outline-color .2s,box-shadow .2s;position:relative}
     .preview-editable:hover,.preview-editing .preview-editable{outline-color:#ff6b9d;box-shadow:0 0 0 4px rgba(255,107,157,.08)}
     .card-tip{position:absolute;left:10px;top:10px;background:rgba(17,24,39,.9);color:#fff;border-radius:999px;padding:5px 10px;font-size:12px;z-index:6;pointer-events:none}
-    .image-action-badge{position:absolute;right:10px;top:10px;background:#ff6b9d;color:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;z-index:8;box-shadow:0 4px 12px rgba(0,0,0,.18);pointer-events:none}
+    .image-action-badge{position:absolute;inset:auto 10px 10px auto;background:#ff6b9d;color:#fff;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;z-index:8;box-shadow:0 4px 12px rgba(0,0,0,.18);pointer-events:none;opacity:0;transform:translateY(8px);transition:all .2s}
+    .preview-editable:hover .image-action-badge,.preview-editing .preview-editable .image-action-badge{opacity:1;transform:translateY(0)}
+    .image-action-shade{position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,.18), rgba(0,0,0,0));border-radius:inherit;opacity:0;transition:opacity .2s;pointer-events:none;z-index:7}
+    .preview-editable:hover .image-action-shade,.preview-editing .preview-editable .image-action-shade{opacity:1}
     .muted{color:#6b7280}
   </style>
 </head>
@@ -456,12 +459,15 @@
       });
     }
 
-    function ensureImageBadge(el, text='上传替换图片'){
-      if (!el || el.querySelector(':scope > .image-action-badge')) return;
+    function ensureImageBadge(el, text='点击上传图片'){
+      if (!el || el.querySelector('.image-action-badge')) return;
       el.style.position = 'relative';
+      const shade = document.createElement('div');
+      shade.className = 'image-action-shade';
       const badge = document.createElement('div');
       badge.className = 'image-action-badge';
       badge.textContent = text;
+      el.appendChild(shade);
       el.appendChild(badge);
     }
 
@@ -480,28 +486,28 @@
         if (!el || el.dataset.veBound) return;
         el.dataset.veBound = '1';
         el.classList.add('preview-editable');
-        if (m.type === 'image') ensureImageBadge(el.parentElement || el, '上传LOGO');
+        if (m.type === 'image') ensureImageBadge(el.parentElement || el, '点击上传LOGO');
         el.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); openSimpleModal(m.label, m.type, state[m.key], v=>{ state[m.key]=v; persistAndCloudSave(); syncPanel(); renderPreview(); }); }, true);
       });
       doc.querySelectorAll('.product-card').forEach(card=>{
         if (card.dataset.veBound) return;
         card.dataset.veBound = '1';
         card.classList.add('preview-editable');
-        ensureImageBadge(card, '编辑产品/换图');
+        ensureImageBadge(card, '点击上传产品图片');
         card.addEventListener('click', (e)=>{ if (e.target.closest('button')) return; e.preventDefault(); e.stopPropagation(); openProductModal(Number(card.dataset.index)); }, true);
       });
       doc.querySelectorAll('.category-card').forEach(card=>{
         if (card.dataset.veBound) return;
         card.dataset.veBound = '1';
         card.classList.add('preview-editable');
-        ensureImageBadge(card, '编辑分类图片');
+        ensureImageBadge(card, '点击上传分类图片');
         card.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); openCategoryModal(Number(card.dataset.categoryIndex)); }, true);
       });
       doc.querySelectorAll('.instagram-card').forEach((card, index)=>{
         if (card.dataset.veBound) return;
         card.dataset.veBound = '1';
         card.classList.add('preview-editable');
-        ensureImageBadge(card, '编辑社区图片');
+        ensureImageBadge(card, '点击上传社区图片');
         card.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); openInstagramModal(index); }, true);
       });
     }
