@@ -93,6 +93,12 @@
       </div>
 
       <div class="section">
+        <h1 style="font-size:18px;margin:0 0 10px">分类图片区管理</h1>
+        <div class="list" id="categoryList"></div>
+        <div class="small">这里可以编辑 Shop by Category 里的每一张分类图片，支持本地上传。</div>
+      </div>
+
+      <div class="section">
         <h1 style="font-size:18px;margin:0 0 10px">产品管理</h1>
         <div class="actions">
           <button class="btn primary" id="addProduct">+ 新增产品</button>
@@ -136,6 +142,22 @@
       primaryColor:'#ff6b9d',
       secondaryColor:'#c06c84',
       heroBg:'#ffeaa7',
+      categories:[
+        {title:'Epoxy Resin', desc:'Crystal clear, perfect for art', image:'', emoji:'💧', bg:'linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%)', link:'catalog.html#epoxy-resin'},
+        {title:'UV Resin', desc:'Quick cure, instant results! ⭐', image:'', emoji:'☀️', bg:'linear-gradient(135deg, #ffd3b6 0%, #ffaaa5 100%)', link:'catalog.html#uv-resin'},
+        {title:'Silicone Molds', desc:'Cute designs, endless creativity', image:'', emoji:'🧁', bg:'linear-gradient(135deg, #ff8b94 0%, #ffaaa5 100%)', link:'catalog.html#silicone-molds'},
+        {title:'DIY Resin Kits', desc:'Everything you need to start!', image:'', emoji:'🎁', bg:'linear-gradient(135deg, #b4a7d6 0%, #ce9ffc 100%)', link:'catalog.html#diy-kits'},
+        {title:'Pigments', desc:'Rainbow colors for your art ⭐', image:'', emoji:'🎨', bg:'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)', link:'catalog.html#pigments'},
+        {title:'DIY Tools', desc:'Make your crafts shine!', image:'', emoji:'✨', bg:'linear-gradient(135deg, #74ebd5 0%, #acb6e5 100%)', link:'catalog.html#diy-tools'}
+      ],
+      instagram:[
+        {image:'', likes:'💕 1.2k', bg:'linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%)'},
+        {image:'', likes:'💕 2.3k', bg:'linear-gradient(135deg, #ff8b94 0%, #ffaaa5 100%)'},
+        {image:'', likes:'💕 856', bg:'linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%)'},
+        {image:'', likes:'💕 3.1k', bg:'linear-gradient(135deg, #ffd3b6 0%, #ffaaa5 100%)'},
+        {image:'', likes:'💕 1.8k', bg:'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)'},
+        {image:'', likes:'💕 2.7k', bg:'linear-gradient(135deg, #b4a7d6 0%, #ce9ffc 100%)'}
+      ],
       products:[
         {category:'Epoxy Resin', image:'images/AB Epoxy Resin.png', badge:'Best Seller ⭐', name:'AB Epoxy Resin', desc:'Crystal clear, UV resistant, 1:1 ratio', price:'$29.99', originalPrice:'$39.99'},
         {category:'UV Resin', image:'images/UV Resin.jpg', badge:'New! 🎉', name:'UV Resin', desc:'Quick cure, instant results! Perfect for beginners', price:'$19.99', originalPrice:''},
@@ -157,6 +179,7 @@
     const confirmEdit = document.getElementById('confirmEdit');
     const cancelEdit = document.getElementById('cancelEdit');
     const productList = document.getElementById('productList');
+    const categoryList = document.getElementById('categoryList');
     const toggleEdit = document.getElementById('toggleEdit');
     let active = null;
     let editEnabled = true;
@@ -241,6 +264,48 @@
     function escapeHtml(s){ return String(s || '').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
     function fileToDataURL(file){ return new Promise((resolve,reject)=>{ const r = new FileReader(); r.onload = ()=>resolve(r.result); r.onerror = reject; r.readAsDataURL(file); }); }
 
+    function renderCategoryList(){
+      if (!categoryList) return;
+      categoryList.innerHTML = '';
+      state.categories.forEach((c, i)=>{
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <div class="meta">
+            <div class="title">${escapeHtml(c.title || '未命名分类')}</div>
+            <div class="sub">${c.image ? '已上传图片' : '使用默认图标'} · ${escapeHtml(c.desc || '')}</div>
+          </div>
+          <div class="tools">
+            <button class="mini-btn edit" data-catedit="${i}">编辑图片</button>
+          </div>
+        `;
+        categoryList.appendChild(div);
+      });
+      categoryList.querySelectorAll('[data-catedit]').forEach(btn=>btn.addEventListener('click', ()=>openCategoryModal(Number(btn.dataset.catedit))));
+    }
+
+    function openCategoryModal(index){
+      const c = state.categories[index];
+      active = {categoryIndex:index};
+      modalTitle.textContent = `编辑分类图片：${c.title}`;
+      modalDesc.textContent = '你可以上传本地图片，也可以修改标题和描述。';
+      modalBody.innerHTML = `
+        <div class="row-1">
+          <div class="group"><label>分类标题</label><input id="cTitle" type="text" value="${escapeHtml(c.title)}"></div>
+          <div class="group"><label>分类描述</label><input id="cDesc" type="text" value="${escapeHtml(c.desc)}"></div>
+          <div class="group"><label>图片地址（可空）</label><input id="cImage" type="text" value="${escapeHtml(c.image || '')}"></div>
+          <div class="group"><label>上传本地图片</label><input id="cFile" type="file" accept="image/*"></div>
+        </div>
+      `;
+      overlay.classList.add('show');
+      const file = document.getElementById('cFile');
+      file.addEventListener('change', async (e)=>{
+        const f = e.target.files && e.target.files[0]; if (!f) return;
+        const url = await fileToDataURL(f);
+        document.getElementById('cImage').value = url;
+      }, {once:true});
+    }
+
     function renderProductList(){
       productList.innerHTML = '';
       state.products.forEach((p, i)=>{
@@ -287,7 +352,9 @@
       const footer = doc.querySelector('.footer-bottom p'); if (footer) footer.innerHTML = `&copy; 2026 ${escapeHtml(state.brandName)}. All rights reserved. | Custom Manufacturer | Fujian, China`;
       const brand = doc.querySelector('.nav-logo h1, .logo-text h1'); if (brand) brand.textContent = state.brandName;
       applyTheme(doc);
+      renderCategories(doc);
       renderProducts(doc);
+      renderInstagram(doc);
       enableInlineEditing(doc);
     }
 
@@ -301,8 +368,69 @@
         .hero{background:linear-gradient(135deg, ${state.heroBg} 0%, #fab1a0 100%) !important;}
         .preview-editable{outline:2px dashed transparent;outline-offset:3px;cursor:pointer}
         .preview-editable:hover,.preview-editing .preview-editable{outline-color:${state.primaryColor};box-shadow:0 0 0 4px rgba(255,107,157,.08)}
+        .category-image img,.instagram-card img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit}
+        .category-image{overflow:hidden}
       `;
       doc.head.appendChild(s);
+    }
+
+    function renderCategories(doc){
+      const grid = doc.querySelector('.category-grid');
+      if (!grid || !Array.isArray(state.categories)) return;
+      grid.innerHTML = '';
+      state.categories.forEach((c, i)=>{
+        const card = doc.createElement('a');
+        card.href = c.link || '#';
+        card.className = 'category-card';
+        card.dataset.categoryIndex = i;
+        const media = c.image
+          ? `<img src="${escapeHtml(c.image)}" alt="${escapeHtml(c.title)}">`
+          : `<span class="category-emoji">${escapeHtml(c.emoji || '✨')}</span>`;
+        card.innerHTML = `
+          <div class="category-image" style="background:${c.bg || 'linear-gradient(135deg,#eee,#ddd)'};">${media}</div>
+          <h3>${escapeHtml(c.title)}</h3>
+          <p>${escapeHtml(c.desc)}</p>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderInstagram(doc){
+      const grid = doc.querySelector('.instagram-grid');
+      if (!grid || !Array.isArray(state.instagram)) return;
+      grid.innerHTML = '';
+      state.instagram.forEach((item, i)=>{
+        const card = doc.createElement('div');
+        card.className = 'instagram-card';
+        card.dataset.instagramIndex = i;
+        card.style.background = item.bg || 'linear-gradient(135deg,#eee,#ddd)';
+        card.innerHTML = `
+          ${item.image ? `<img src="${escapeHtml(item.image)}" alt="community image ${i+1}">` : ''}
+          <div class="instagram-overlay"><span class="instagram-icon">${escapeHtml(item.likes || '')}</span></div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function openInstagramModal(index){
+      const item = state.instagram[index];
+      active = {instagramIndex:index};
+      modalTitle.textContent = `编辑社区图片 #${index+1}`;
+      modalDesc.textContent = '你可以上传本地图片，也可以修改点赞数字。';
+      modalBody.innerHTML = `
+        <div class="row-1">
+          <div class="group"><label>图片地址（可空）</label><input id="igImage" type="text" value="${escapeHtml(item.image || '')}"></div>
+          <div class="group"><label>上传本地图片</label><input id="igFile" type="file" accept="image/*"></div>
+          <div class="group"><label>点赞文案</label><input id="igLikes" type="text" value="${escapeHtml(item.likes || '')}"></div>
+        </div>
+      `;
+      overlay.classList.add('show');
+      const file = document.getElementById('igFile');
+      file.addEventListener('change', async (e)=>{
+        const f = e.target.files && e.target.files[0]; if (!f) return;
+        const url = await fileToDataURL(f);
+        document.getElementById('igImage').value = url;
+      }, {once:true});
     }
 
     function renderProducts(doc){
@@ -349,6 +477,18 @@
         card.dataset.veBound = '1';
         card.classList.add('preview-editable');
         card.addEventListener('click', (e)=>{ if (e.target.closest('button')) return; e.preventDefault(); e.stopPropagation(); openProductModal(Number(card.dataset.index)); }, true);
+      });
+      doc.querySelectorAll('.category-card').forEach(card=>{
+        if (card.dataset.veBound) return;
+        card.dataset.veBound = '1';
+        card.classList.add('preview-editable');
+        card.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); openCategoryModal(Number(card.dataset.categoryIndex)); }, true);
+      });
+      doc.querySelectorAll('.instagram-card').forEach((card, index)=>{
+        if (card.dataset.veBound) return;
+        card.dataset.veBound = '1';
+        card.classList.add('preview-editable');
+        card.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); openInstagramModal(index); }, true);
       });
     }
 
@@ -414,6 +554,21 @@
       if (active.onSave){
         const field = modalBody.querySelector('input,textarea');
         active.onSave(field ? field.value : '');
+      } else if (typeof active.categoryIndex === 'number') {
+        state.categories[active.categoryIndex] = {
+          ...state.categories[active.categoryIndex],
+          title: document.getElementById('cTitle').value.trim(),
+          desc: document.getElementById('cDesc').value.trim(),
+          image: document.getElementById('cImage').value.trim()
+        };
+        persistAndCloudSave(); renderCategoryList(); renderPreview();
+      } else if (typeof active.instagramIndex === 'number') {
+        state.instagram[active.instagramIndex] = {
+          ...state.instagram[active.instagramIndex],
+          image: document.getElementById('igImage').value.trim(),
+          likes: document.getElementById('igLikes').value.trim()
+        };
+        persistAndCloudSave(); renderPreview();
       } else if (typeof active.productIndex === 'number') {
         const p = {
           category: document.getElementById('pCategory').value.trim() || 'Tools',
@@ -437,13 +592,13 @@
     function deleteProduct(index){ if (!confirm(`确定删除第 ${index+1} 个产品吗？`)) return; state.products.splice(index, 1); persistAndCloudSave(); renderProductList(); renderPreview(); }
 
     document.getElementById('saveAll').addEventListener('click', ()=>{ persistAndCloudSave(); renderPreview(); showCloudStatus('☁️ 正在同步...', '#f59e0b'); });
-    document.getElementById('resetAll').addEventListener('click', ()=>{ Object.assign(state, cloneDefaults()); persistAndCloudSave(); syncPanel(); renderProductList(); renderPreview(); });
+    document.getElementById('resetAll').addEventListener('click', ()=>{ Object.assign(state, cloneDefaults()); persistAndCloudSave(); syncPanel(); renderCategoryList(); renderProductList(); renderPreview(); });
     document.getElementById('exportJson').addEventListener('click', ()=>{ const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'timesrui-config.json'; a.click(); });
     document.getElementById('addProduct').addEventListener('click', ()=>openProductModal(state.products.length));
     document.getElementById('refreshPreview').addEventListener('click', renderPreview);
     toggleEdit.addEventListener('click', ()=>{ editEnabled = !editEnabled; toggleEdit.textContent = `编辑模式：${editEnabled ? '开' : '关'}`; toggleEdit.classList.toggle('on', editEnabled); const doc = frame.contentDocument; if (doc) doc.body.classList.toggle('preview-editing', editEnabled); });
 
-    bindPanel(); syncPanel(); renderProductList();
+    bindPanel(); syncPanel(); renderCategoryList(); renderProductList();
     frame.addEventListener('load', renderPreview);
     if (frame.contentDocument && frame.contentDocument.readyState === 'complete') renderPreview();
     // 启动时从云端加载最新数据
