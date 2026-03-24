@@ -51,8 +51,13 @@
     .preview-editable{outline:2px dashed transparent;outline-offset:3px;cursor:pointer;transition:outline-color .2s,box-shadow .2s;position:relative}
     .preview-editable:hover,.preview-editing .preview-editable{outline-color:#ff6b9d;box-shadow:0 0 0 4px rgba(255,107,157,.08)}
     .card-tip{position:absolute;left:10px;top:10px;background:rgba(17,24,39,.9);color:#fff;border-radius:999px;padding:5px 10px;font-size:12px;z-index:6;pointer-events:none}
-    .image-action-badge{position:absolute;inset:auto 10px 10px auto;background:#ff6b9d;color:#fff;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;z-index:8;box-shadow:0 4px 12px rgba(0,0,0,.18);pointer-events:none;opacity:0;transform:translateY(8px);transition:all .2s}
-    .preview-editable:hover .image-action-badge,.preview-editing .preview-editable .image-action-badge{opacity:1;transform:translateY(0)}
+    .image-action-badge{position:absolute;inset:auto 10px 10px auto;background:#ff6b9d;color:#fff;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;z-index:8;box-shadow:0 4px 12px rgba(0,0,0,.18);opacity:0;transform:translateY(8px);transition:all .2s;pointer-events:none}
+    .image-toolbar{position:absolute;right:10px;bottom:10px;display:flex;gap:8px;z-index:9;opacity:0;transform:translateY(8px);transition:all .2s}
+    .image-toolbar button{border:0;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+    .image-toolbar .upload{background:#ff6b9d;color:#fff}
+    .image-toolbar .replace{background:#111827;color:#fff}
+    .image-toolbar .remove{background:#fff;color:#dc2626}
+    .preview-editable:hover .image-action-badge,.preview-editing .preview-editable .image-action-badge,.preview-editable:hover .image-toolbar,.preview-editing .preview-editable .image-toolbar{opacity:1;transform:translateY(0)}
     .image-action-shade{position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,.18), rgba(0,0,0,0));border-radius:inherit;opacity:0;transition:opacity .2s;pointer-events:none;z-index:7}
     .preview-editable:hover .image-action-shade,.preview-editing .preview-editable .image-action-shade{opacity:1}
     .muted{color:#6b7280}
@@ -460,15 +465,32 @@
     }
 
     function ensureImageBadge(el, text='点击上传图片'){
-      if (!el || el.querySelector('.image-action-badge')) return;
+      if (!el || el.querySelector('.image-toolbar')) return;
       el.style.position = 'relative';
       const shade = document.createElement('div');
       shade.className = 'image-action-shade';
       const badge = document.createElement('div');
       badge.className = 'image-action-badge';
       badge.textContent = text;
+      const toolbar = document.createElement('div');
+      toolbar.className = 'image-toolbar';
+      toolbar.innerHTML = `
+        <button class="upload" type="button">上传图片</button>
+        <button class="replace" type="button">更换图片</button>
+        <button class="remove" type="button">删除图片</button>
+      `;
+      toolbar.querySelectorAll('button').forEach(btn=>btn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        if (btn.classList.contains('remove')) {
+          el.dispatchEvent(new CustomEvent('ve-remove-image', { bubbles: false }));
+        } else {
+          el.click();
+        }
+      }));
       el.appendChild(shade);
       el.appendChild(badge);
+      el.appendChild(toolbar);
     }
 
     function enableInlineEditing(doc){
@@ -486,7 +508,11 @@
         if (!el || el.dataset.veBound) return;
         el.dataset.veBound = '1';
         el.classList.add('preview-editable');
-        if (m.type === 'image') ensureImageBadge(el.parentElement || el, '点击上传LOGO');
+        const imageWrap = el.parentElement || el;
+        if (m.type === 'image') {
+          ensureImageBadge(imageWrap, '点击上传LOGO');
+          imageWrap.addEventListener('ve-remove-image', ()=>{ state[m.key] = ''; persistAndCloudSave(); syncPanel(); renderPreview(); }, { once:true });
+        }
         el.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); openSimpleModal(m.label, m.type, state[m.key], v=>{ state[m.key]=v; persistAndCloudSave(); syncPanel(); renderPreview(); }); }, true);
       });
       doc.querySelectorAll('.product-card').forEach(card=>{
@@ -494,6 +520,7 @@
         card.dataset.veBound = '1';
         card.classList.add('preview-editable');
         ensureImageBadge(card, '点击上传产品图片');
+        card.addEventListener('ve-remove-image', ()=>{ const idx = Number(card.dataset.index); if (!Number.isNaN(idx) && state.products[idx]) { state.products[idx].image = ''; persistAndCloudSave(); renderPreview(); renderProductList(); } }, { once:true });
         card.addEventListener('click', (e)=>{ if (e.target.closest('button')) return; e.preventDefault(); e.stopPropagation(); openProductModal(Number(card.dataset.index)); }, true);
       });
       doc.querySelectorAll('.category-card').forEach(card=>{
@@ -501,6 +528,7 @@
         card.dataset.veBound = '1';
         card.classList.add('preview-editable');
         ensureImageBadge(card, '点击上传分类图片');
+        card.addEventListener('ve-remove-image', ()=>{ const idx = Number(card.dataset.categoryIndex); if (!Number.isNaN(idx) && state.categories[idx]) { state.categories[idx].image = ''; persistAndCloudSave(); renderPreview(); renderCategoryList(); } }, { once:true });
         card.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); openCategoryModal(Number(card.dataset.categoryIndex)); }, true);
       });
       doc.querySelectorAll('.instagram-card').forEach((card, index)=>{
@@ -508,6 +536,7 @@
         card.dataset.veBound = '1';
         card.classList.add('preview-editable');
         ensureImageBadge(card, '点击上传社区图片');
+        card.addEventListener('ve-remove-image', ()=>{ if (state.instagram[index]) { state.instagram[index].image = ''; persistAndCloudSave(); renderPreview(); } }, { once:true });
         card.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); openInstagramModal(index); }, true);
       });
     }
