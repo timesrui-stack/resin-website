@@ -3,655 +3,650 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Timesrui Resin 可视化编辑器</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>台瑞树脂 · 网站后台管理</title>
   <style>
-    body{margin:0;background:#eef2f7;font-family:'Poppins',sans-serif}
-    .shell{display:grid;grid-template-columns:360px 1fr;min-height:100vh}
-    .panel{background:#fff;border-right:1px solid #e5e7eb;padding:16px;position:sticky;top:0;height:100vh;overflow:auto}
-    .panel h1{font-size:20px;margin:0 0 10px}
-    .hint{font-size:13px;line-height:1.6;color:#6b7280;margin-bottom:12px}
-    .group{margin-bottom:12px}
-    .group label{display:block;font-size:13px;font-weight:700;color:#1f2937;margin-bottom:6px}
-    .group input,.group textarea,.group select{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;box-sizing:border-box}
-    .group textarea{min-height:72px;resize:vertical}
-    .actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
-    .btn{border:0;border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:700}
-    .btn.primary{background:#ff6b9d;color:#fff}
-    .btn.secondary{background:#e5e7eb;color:#111}
-    .btn.success{background:#16a34a;color:#fff}
-    .btn.danger{background:#dc2626;color:#fff}
-    .section{border-top:1px solid #eee;padding-top:14px;margin-top:14px}
-    .list{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow:auto}
-    .item{border:1px solid #e5e7eb;border-radius:12px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .item .meta{min-width:0}
-    .item .title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
-    .item .sub{font-size:12px;color:#6b7280}
-    .item .tools{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
-    .mini-btn{border:0;border-radius:8px;padding:6px 8px;cursor:pointer;font-size:12px;font-weight:700}
-    .mini-btn.edit{background:#dbeafe;color:#1d4ed8}.mini-btn.del{background:#fee2e2;color:#b91c1c}.mini-btn.up,.mini-btn.down{background:#f3f4f6;color:#111}
-    .preview{background:#fff;position:relative}
-    .topbar{background:#111827;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:0;z-index:10;flex-wrap:wrap}
-    .toggle{display:inline-flex;align-items:center;gap:8px;background:#374151;color:#fff;padding:8px 12px;border-radius:999px;font-size:13px;cursor:pointer;border:0}
-    .toggle.on{background:#ec4899}
-    .status{font-size:13px;opacity:.88}
-    iframe{width:100%;height:calc(100vh - 50px);border:0;display:block}
-    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:9999;padding:16px}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:#f0f2f5;color:#222;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+    /* 顶部导航 */
+    .topbar{background:#1a1f2e;color:#fff;height:56px;display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+    .topbar .logo{font-size:18px;font-weight:700;letter-spacing:1px;color:#ff6b9d}
+    .topbar .divider{width:1px;height:24px;background:#333;margin:0 8px}
+    .topbar .subtitle{font-size:13px;color:#aaa}
+    .topbar .spacer{flex:1}
+    .topbar .toggle-btn{border:1px solid #444;background:transparent;color:#ddd;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;transition:all .2s}
+    .topbar .toggle-btn.on{background:#ff6b9d;border-color:#ff6b9d;color:#fff}
+    .topbar .save-btn{background:#ff6b9d;color:#fff;border:0;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700}
+    .topbar .save-btn:hover{background:#e05580}
+    .cloud-dot{width:8px;height:8px;border-radius:50%;background:#6b7280;display:inline-block;margin-right:6px;transition:background .3s}
+    .cloud-dot.saving{background:#f59e0b;animation:pulse 1s infinite}
+    .cloud-dot.saved{background:#22c55e}
+    .cloud-dot.error{background:#ef4444}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+    /* 主体布局 */
+    .shell{display:flex;flex:1;overflow:hidden}
+
+    /* 左侧菜单栏 */
+    .sidebar{width:200px;background:#1a1f2e;display:flex;flex-direction:column;flex-shrink:0;overflow:auto}
+    .sidebar .menu-item{display:flex;align-items:center;gap:10px;padding:14px 20px;font-size:14px;color:#9ca3af;cursor:pointer;transition:all .2s;border-left:3px solid transparent}
+    .sidebar .menu-item:hover{background:#252b3b;color:#fff}
+    .sidebar .menu-item.active{background:#252b3b;color:#ff6b9d;border-left-color:#ff6b9d}
+    .sidebar .menu-item .icon{font-size:18px;width:22px;text-align:center}
+    .sidebar .menu-section{padding:16px 20px 6px;font-size:11px;color:#4b5563;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+
+    /* 中间面板 */
+    .panel{width:380px;background:#fff;border-right:1px solid #e5e7eb;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+    .panel-header{padding:20px;border-bottom:1px solid #f0f0f0;flex-shrink:0}
+    .panel-header h2{font-size:18px;font-weight:700;margin-bottom:4px}
+    .panel-header p{font-size:13px;color:#6b7280}
+    .panel-body{flex:1;overflow:auto;padding:16px}
+    .panel-tab{display:none}
+    .panel-tab.active{display:block}
+
+    /* 表单组件 */
+    .form-section{margin-bottom:20px}
+    .form-section h3{font-size:13px;font-weight:700;color:#374151;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;gap:8px}
+    .form-group{margin-bottom:14px}
+    .form-group label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:6px}
+    .form-group input,.form-group textarea,.form-group select{width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;transition:border .2s;background:#fafafa}
+    .form-group input:focus,.form-group textarea:focus{outline:0;border-color:#ff6b9d;background:#fff}
+    .form-group textarea{min-height:80px;resize:vertical}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .color-group{display:flex;align-items:center;gap:10px}
+    .color-group input[type=color]{width:44px;height:36px;border:1px solid #e5e7eb;border-radius:8px;padding:2px;cursor:pointer}
+    .color-group span{font-size:12px;color:#6b7280}
+    .upload-btn{display:flex;align-items:center;gap:8px;border:1.5px dashed #d1d5db;border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;background:#fafafa;font-size:13px;color:#6b7280}
+    .upload-btn:hover{border-color:#ff6b9d;color:#ff6b9d;background:#fff5f8}
+    .upload-btn input[type=file]{display:none}
+
+    /* 产品列表 */
+    .product-item{border:1px solid #e5e7eb;border-radius:12px;padding:12px;display:flex;gap:12px;align-items:center;margin-bottom:10px;background:#fff;transition:box-shadow .2s}
+    .product-item:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+    .product-item img{width:56px;height:56px;object-fit:cover;border-radius:8px;background:#f3f4f6;flex-shrink:0}
+    .product-item .no-img{width:56px;height:56px;border-radius:8px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+    .product-item .info{flex:1;min-width:0}
+    .product-item .name{font-size:13px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .product-item .meta{font-size:12px;color:#6b7280}
+    .product-item .actions{display:flex;gap:6px;flex-shrink:0}
+    .icon-btn{border:0;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:12px;font-weight:600}
+    .icon-btn.edit{background:#dbeafe;color:#1d4ed8}
+    .icon-btn.del{background:#fee2e2;color:#dc2626}
+    .icon-btn.up,.icon-btn.down{background:#f3f4f6;color:#374151}
+    .add-product-btn{width:100%;border:1.5px dashed #d1d5db;border-radius:12px;padding:14px;text-align:center;cursor:pointer;font-size:13px;color:#6b7280;background:#fafafa;transition:all .2s}
+    .add-product-btn:hover{border-color:#ff6b9d;color:#ff6b9d;background:#fff5f8}
+
+    /* 分类列表 */
+    .cat-item{border:1px solid #e5e7eb;border-radius:12px;padding:12px;display:flex;gap:12px;align-items:center;margin-bottom:10px;background:#fff;transition:box-shadow .2s;cursor:pointer}
+    .cat-item:hover{box-shadow:0 4px 12px rgba(0,0,0,.08);border-color:#ff6b9d}
+    .cat-thumb{width:52px;height:52px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;overflow:hidden}
+    .cat-thumb img{width:100%;height:100%;object-fit:cover}
+    .cat-item .info{flex:1;min-width:0}
+    .cat-item .name{font-size:13px;font-weight:700}
+    .cat-item .sub{font-size:12px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    /* 社区图片 */
+    .ig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .ig-item{aspect-ratio:1;border-radius:10px;overflow:hidden;position:relative;cursor:pointer;border:2px solid transparent;transition:border .2s}
+    .ig-item:hover{border-color:#ff6b9d}
+    .ig-item img,.ig-item .ig-bg{width:100%;height:100%;object-fit:cover;display:block}
+    .ig-item .ig-bg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700}
+    .ig-item .edit-badge{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;opacity:0;transition:opacity .2s}
+    .ig-item:hover .edit-badge{opacity:1}
+
+    /* 右侧预览 */
+    .preview{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#e5e7eb}
+    .preview-bar{background:#fff;border-bottom:1px solid #e5e7eb;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .preview-bar .url{flex:1;font-size:12px;color:#6b7280;background:#f3f4f6;padding:6px 12px;border-radius:6px}
+    .preview-bar .open-btn{border:1px solid #e5e7eb;background:#fff;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;color:#374151}
+    .preview-bar .open-btn:hover{background:#f3f4f6}
+    iframe{flex:1;border:0;width:100%}
+
+    /* 弹窗 */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
     .overlay.show{display:flex}
-    .modal{width:min(760px,100%);background:#fff;border-radius:18px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.35);max-height:90vh;overflow:auto}
-    .modal h3{margin:0 0 8px}
-    .modal p{margin:0 0 12px;color:#555;font-size:14px;line-height:1.55}
-    .modal .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .modal .row-1{display:grid;grid-template-columns:1fr;gap:10px}
-    .modal input,.modal textarea,.modal select{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:14px;box-sizing:border-box}
-    .modal textarea{min-height:120px;resize:vertical}
-    .modal .actions{justify-content:flex-end}
-    .small{font-size:12px;color:#6b7280;margin-top:8px}
-    .tag{display:inline-block;background:#ec4899;color:#fff;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700}
-    .preview-editable{outline:2px dashed transparent;outline-offset:3px;cursor:pointer;transition:outline-color .2s,box-shadow .2s;position:relative}
-    .preview-editable:hover,.preview-editing .preview-editable{outline-color:#ff6b9d;box-shadow:0 0 0 4px rgba(255,107,157,.08)}
-    .card-tip{position:absolute;left:10px;top:10px;background:rgba(17,24,39,.9);color:#fff;border-radius:999px;padding:5px 10px;font-size:12px;z-index:6;pointer-events:none}
-    .image-action-badge{position:absolute;inset:auto 10px 10px auto;background:#ff6b9d;color:#fff;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;z-index:8;box-shadow:0 4px 12px rgba(0,0,0,.18);opacity:0;transform:translateY(8px);transition:all .2s;pointer-events:none}
-    .image-toolbar{position:absolute;right:10px;bottom:10px;display:flex;gap:8px;z-index:9;opacity:0;transform:translateY(8px);transition:all .2s}
-    .image-toolbar button{border:0;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.18)}
-    .image-toolbar .upload{background:#ff6b9d;color:#fff}
-    .image-toolbar .replace{background:#111827;color:#fff}
-    .image-toolbar .remove{background:#fff;color:#dc2626}
-    .preview-editable:hover .image-action-badge,.preview-editing .preview-editable .image-action-badge,.preview-editable:hover .image-toolbar,.preview-editing .preview-editable .image-toolbar{opacity:1;transform:translateY(0)}
-    .image-action-shade{position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,.18), rgba(0,0,0,0));border-radius:inherit;opacity:0;transition:opacity .2s;pointer-events:none;z-index:7}
-    .preview-editable:hover .image-action-shade,.preview-editing .preview-editable .image-action-shade{opacity:1}
-    .muted{color:#6b7280}
+    .modal{width:min(640px,100%);background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.3);max-height:90vh;display:flex;flex-direction:column}
+    .modal-head{padding:20px 24px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
+    .modal-head h3{font-size:17px;font-weight:700}
+    .modal-head .close{border:0;background:0;font-size:22px;cursor:pointer;color:#9ca3af;line-height:1}
+    .modal-body{padding:20px 24px;overflow:auto;flex:1}
+    .modal-foot{padding:16px 24px;border-top:1px solid #f0f0f0;display:flex;justify-content:flex-end;gap:10px}
+    .modal-foot button{border:0;border-radius:8px;padding:10px 20px;cursor:pointer;font-size:14px;font-weight:700}
+    .modal-foot .cancel{background:#f3f4f6;color:#374151}
+    .modal-foot .confirm{background:#ff6b9d;color:#fff}
+    .modal-foot .confirm:hover{background:#e05580}
+    .img-preview-box{width:100%;height:160px;border:1.5px dashed #e5e7eb;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#fafafa;margin-bottom:12px}
+    .img-preview-box img{max-width:100%;max-height:100%;object-fit:contain}
+    .img-preview-box .placeholder{font-size:36px;color:#d1d5db}
+
+    /* 通知 */
+    .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:700;color:#fff;z-index:99999;box-shadow:0 8px 24px rgba(0,0,0,.2);transition:all .3s;transform:translateY(0);opacity:1}
+    .toast.hide{transform:translateY(20px);opacity:0}
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <strong>Timesrui Resin 可视化编辑器</strong>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <button class="toggle on" id="toggleEdit">编辑模式：开</button>
-      <span class="status">点击预览中的文字/图片/产品卡片即可修改；支持新增、删除、上传图片、上下排序、自动保存</span>
+
+<!-- 顶部导航 -->
+<div class="topbar">
+  <span class="logo">台瑞树脂</span>
+  <div class="divider"></div>
+  <span class="subtitle">网站后台管理</span>
+  <div class="spacer"></div>
+  <span class="cloud-dot" id="cloudDot"></span>
+  <span id="cloudText" style="font-size:13px;color:#9ca3af;margin-right:12px">就绪</span>
+  <button class="toggle-btn on" id="toggleEdit">编辑模式 开</button>
+  <button class="save-btn" id="saveBtn">保存并同步</button>
+</div>
+
+<div class="shell">
+
+  <!-- 左侧菜单 -->
+  <nav class="sidebar">
+    <div class="menu-section">内容管理</div>
+    <div class="menu-item active" data-tab="basic"><span class="icon">⚙️</span>基础设置</div>
+    <div class="menu-item" data-tab="images"><span class="icon">🖼️</span>图片管理</div>
+    <div class="menu-item" data-tab="categories"><span class="icon">📂</span>分类管理</div>
+    <div class="menu-item" data-tab="products"><span class="icon">📦</span>产品管理</div>
+    <div class="menu-item" data-tab="community"><span class="icon">💕</span>社区图片</div>
+    <div class="menu-section">外观</div>
+    <div class="menu-item" data-tab="theme"><span class="icon">🎨</span>主题配色</div>
+  </nav>
+
+  <!-- 中间面板 -->
+  <aside class="panel">
+    <div class="panel-header">
+      <h2 id="panelTitle">基础设置</h2>
+      <p id="panelDesc">修改网站标题、LOGO、公告等基础内容</p>
+    </div>
+    <div class="panel-body">
+
+      <!-- 基础设置 -->
+      <div class="panel-tab active" id="tab-basic">
+        <div class="form-section">
+          <h3>🌐 品牌信息</h3>
+          <div class="form-group"><label>网站标题（浏览器显示）</label><input id="siteTitle" type="text"></div>
+          <div class="form-group"><label>品牌名称</label><input id="brandName" type="text"></div>
+          <div class="form-group"><label>顶部公告</label><textarea id="announcement"></textarea></div>
+        </div>
+        <div class="form-section">
+          <h3>🦸 首页 Hero 区域</h3>
+          <div class="form-group"><label>主标题</label><input id="heroTitle" type="text"></div>
+          <div class="form-group"><label>副标题</label><input id="heroSubtitle" type="text"></div>
+          <div class="form-group"><label>按钮文案</label><input id="heroBtn" type="text"></div>
+        </div>
+        <div class="form-section">
+          <h3>🦶 页脚</h3>
+          <div class="form-group"><label>页脚公司名称</label><input id="footerCompany" type="text"></div>
+        </div>
+      </div>
+
+      <!-- 图片管理 -->
+      <div class="panel-tab" id="tab-images">
+        <div class="form-section">
+          <h3>🔖 LOGO</h3>
+          <div id="logoPreviewBox" class="img-preview-box"><span class="placeholder">🖼️</span></div>
+          <label class="upload-btn"><input id="logoFile" type="file" accept="image/*"><span>📁</span> 点击上传新 LOGO</label>
+          <div class="form-group" style="margin-top:10px"><label>或直接填图片地址</label><input id="logoUrl" type="text"></div>
+        </div>
+        <div class="form-section">
+          <h3>🌅 Hero 背景</h3>
+          <div class="form-group"><label>背景色（起始色）</label>
+            <div class="color-group"><input id="heroBg" type="color"><span>首页大图区域的背景渐变起始色</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分类管理 -->
+      <div class="panel-tab" id="tab-categories">
+        <div class="form-section">
+          <h3>📂 分类区块</h3>
+          <p style="font-size:13px;color:#6b7280;margin-bottom:14px">点击每个分类可修改图片、标题和描述</p>
+          <div id="categoryList"></div>
+        </div>
+      </div>
+
+      <!-- 产品管理 -->
+      <div class="panel-tab" id="tab-products">
+        <div class="form-section">
+          <h3>📦 产品列表</h3>
+          <div id="productList"></div>
+          <div class="add-product-btn" id="addProductBtn">＋ 添加新产品</div>
+        </div>
+      </div>
+
+      <!-- 社区图片 -->
+      <div class="panel-tab" id="tab-community">
+        <div class="form-section">
+          <h3>💕 社区展示图片</h3>
+          <p style="font-size:13px;color:#6b7280;margin-bottom:14px">点击图片可上传替换</p>
+          <div class="ig-grid" id="igGrid"></div>
+        </div>
+      </div>
+
+      <!-- 主题配色 -->
+      <div class="panel-tab" id="tab-theme">
+        <div class="form-section">
+          <h3>🎨 主题色</h3>
+          <div class="form-group"><label>主色调</label>
+            <div class="color-group"><input id="primaryColor" type="color"><span>按钮、标题、标签等主要颜色</span></div>
+          </div>
+          <div class="form-group"><label>辅助色</label>
+            <div class="color-group"><input id="secondaryColor" type="color"><span>渐变结束色</span></div>
+          </div>
+          <div class="form-group"><label>Hero 背景起始色</label>
+            <div class="color-group"><input id="heroBg2" type="color"><span>首页大图区背景色</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- 右侧预览 -->
+  <main class="preview">
+    <div class="preview-bar">
+      <span class="url">https://timesrui-stack.github.io/resin-website/</span>
+      <button class="open-btn" onclick="window.open('https://timesrui-stack.github.io/resin-website/','_blank')">🔗 打开网站</button>
+      <button class="open-btn" id="refreshBtn">🔄 刷新预览</button>
+    </div>
+    <iframe id="previewFrame" src="index.html"></iframe>
+  </main>
+</div>
+
+<!-- 弹窗 -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">编辑</h3>
+      <button class="close" id="modalClose">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot">
+      <button class="cancel" id="modalCancel">取消</button>
+      <button class="confirm" id="modalConfirm">保存</button>
     </div>
   </div>
+</div>
 
-  <div class="shell">
-    <aside class="panel">
-      <h1>总控面板</h1>
-      <div class="hint">左侧是全局内容与产品管理。你在这里改完，右侧首页会自动同步。</div>
+<script>
+  const STORAGE_KEY = 'timesrui.visualEditor.products.v3';
+  const CLOUD_BIN_ID = '69be2963b7ec241ddc8aa386';
+  const CLOUD_API_KEY = '$2a$10$jUWgRLevF9MiHDB7l5qgZemlf42Vp3UI4RMuz7ZDUmRTHBc698mP2';
+  const CLOUD_URL = `https://api.jsonbin.io/v3/b/${CLOUD_BIN_ID}`;
+  const PANEL_META = {
+    basic: {title:'基础设置', desc:'修改网站标题、品牌名、公告、Hero 文案'},
+    images: {title:'图片管理', desc:'上传或替换 LOGO、Hero 背景色'},
+    categories: {title:'分类管理', desc:'修改首页分类区块的图片、标题、描述'},
+    products: {title:'产品管理', desc:'新增、编辑、删除、排序产品'},
+    community: {title:'社区图片', desc:'替换首页社区展示图片'},
+    theme: {title:'主题配色', desc:'修改网站主色调、辅助色、背景色'}
+  };
+  const defaults = {
+    siteTitle:'Timesrui Resin - Premium Resin Art Supplies & Epoxy Kits',
+    brandName:'TIMESRUI', logoUrl:'logo.svg',
+    announcement:'🎉 FREE SHIPPING on orders over $50 | 11+ Years Manufacturing Experience',
+    heroTitle:'✨ Create Your Own Magic ✨',
+    heroSubtitle:'Premium DIY resin supplies for crafters, artists & dreamers 💕',
+    heroBtn:'Start Creating 🎨',
+    footerCompany:'Xiamen Timesrui Polymeric Material Technology Co., Ltd.',
+    primaryColor:'#ff6b9d', secondaryColor:'#c06c84', heroBg:'#ffeaa7',
+    categories:[
+      {title:'Epoxy Resin', desc:'Crystal clear, perfect for art', image:'', emoji:'💧', bg:'linear-gradient(135deg,#a8e6cf,#dcedc1)', link:'catalog.html#epoxy-resin'},
+      {title:'UV Resin', desc:'Quick cure, instant results! ⭐', image:'', emoji:'☀️', bg:'linear-gradient(135deg,#ffd3b6,#ffaaa5)', link:'catalog.html#uv-resin'},
+      {title:'Silicone Molds', desc:'Cute designs, endless creativity', image:'', emoji:'🧁', bg:'linear-gradient(135deg,#ff8b94,#ffaaa5)', link:'catalog.html#silicone-molds'},
+      {title:'DIY Resin Kits', desc:'Everything you need to start!', image:'', emoji:'🎁', bg:'linear-gradient(135deg,#b4a7d6,#ce9ffc)', link:'catalog.html#diy-kits'},
+      {title:'Pigments', desc:'Rainbow colors for your art ⭐', image:'', emoji:'🎨', bg:'linear-gradient(135deg,#fccb90,#d57eeb)', link:'catalog.html#pigments'},
+      {title:'DIY Tools', desc:'Make your crafts shine!', image:'', emoji:'✨', bg:'linear-gradient(135deg,#74ebd5,#acb6e5)', link:'catalog.html#diy-tools'}
+    ],
+    instagram:[
+      {image:'',likes:'💕 1.2k',bg:'linear-gradient(135deg,#ffeaa7,#fab1a0)'},
+      {image:'',likes:'💕 2.3k',bg:'linear-gradient(135deg,#ff8b94,#ffaaa5)'},
+      {image:'',likes:'💕 856',bg:'linear-gradient(135deg,#a8e6cf,#dcedc1)'},
+      {image:'',likes:'💕 3.1k',bg:'linear-gradient(135deg,#ffd3b6,#ffaaa5)'},
+      {image:'',likes:'💕 1.8k',bg:'linear-gradient(135deg,#fccb90,#d57eeb)'},
+      {image:'',likes:'💕 2.7k',bg:'linear-gradient(135deg,#b4a7d6,#ce9ffc)'}
+    ],
+    products:[
+      {category:'Epoxy Resin',image:'images/AB Epoxy Resin.png',badge:'Best Seller ⭐',name:'AB Epoxy Resin',desc:'Crystal clear, UV resistant, 1:1 ratio',price:'$29.99',originalPrice:'$39.99'},
+      {category:'UV Resin',image:'images/UV Resin.jpg',badge:'New! 🎉',name:'UV Resin',desc:'Quick cure, instant results! Perfect for beginners',price:'$19.99',originalPrice:''},
+      {category:'Silicone Molds',image:'images/Silicone Molds.png',badge:'',name:'Silicone Molds',desc:'20 adorable designs, super easy!',price:'$24.99',originalPrice:''},
+      {category:'DIY Kits',image:'images/DIY Resin Kits.png',badge:'',name:'DIY Resin Starter Kit',desc:'Everything you need to start crafting!',price:'$34.99',originalPrice:''},
+      {category:'Pigments',image:'images/Pigments & Dyes.webp',badge:'Hot Sale 🔥',name:'Pigments & Dyes',desc:'24 vibrant colors, mica powder',price:'$16.99',originalPrice:'$24.99'},
+      {category:'Tools',image:'images/Glitters & Sparkles.png',badge:'',name:'Glitters & Sparkles',desc:'Make your resin art shine!',price:'$18.99',originalPrice:''},
+      {category:'Tools',image:'images/Dried Flowers.png',badge:'',name:'Dried Flowers',desc:'Natural dried flowers for beautiful resin art',price:'$12.99',originalPrice:''},
+      {category:'Tools',image:'images/Crafting Tools.png',badge:'',name:'Crafting Tools',desc:'Professional tools for perfect results',price:'$22.99',originalPrice:''}
+    ]
+  };
 
-      <div class="group"><label>浏览器标题</label><input id="siteTitle" type="text"></div>
-      <div class="group"><label>品牌名</label><input id="brandName" type="text"></div>
-      <div class="group"><label>LOGO 地址</label><input id="logoUrl" type="text"><div class="small">你可以直接填图片地址，或者用下面的“上传 LOGO 图片”直接选择本地图片。</div></div>
-      <div class="group"><label>上传 LOGO 图片</label><input id="logoFile" type="file" accept="image/*"></div>
-      <div class="group"><label>顶部公告</label><textarea id="announcement"></textarea></div>
+  let state = loadState();
+  let editEnabled = true;
+  let cloudSaveTimer = null;
+  let cloudSyncing = false;
+  let activeModal = null;
 
-      <div class="group"><label>首页主标题</label><input id="heroTitle" type="text"></div>
-      <div class="group"><label>首页副标题</label><input id="heroSubtitle" type="text"></div>
-      <div class="group"><label>首页按钮</label><input id="heroBtn" type="text"></div>
+  const frame = document.getElementById('previewFrame');
 
-      <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div class="group"><label>主色</label><input id="primaryColor" type="color"></div>
-        <div class="group"><label>辅助色</label><input id="secondaryColor" type="color"></div>
-      </div>
-      <div class="group"><label>Hero 背景色</label><input id="heroBg" type="color"></div>
+  function clone(o){ return JSON.parse(JSON.stringify(o)); }
+  function loadState(){ try{ return Object.assign(clone(defaults), JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')); }catch{ return clone(defaults); } }
+  function persist(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  function esc(s){ return String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+  function file2url(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }
 
-      <div class="section">
-        <div class="actions">
-          <button class="btn primary" id="saveAll">保存全部</button>
-          <button class="btn secondary" id="resetAll">恢复默认</button>
-          <button class="btn success" id="exportJson">导出配置</button>
-        </div>
-      </div>
+  /* Toast */
+  function toast(msg, color='#22c55e'){
+    let t=document.getElementById('_toast');
+    if(!t){ t=document.createElement('div'); t.id='_toast'; t.className='toast'; document.body.appendChild(t); }
+    t.textContent=msg; t.style.background=color; t.classList.remove('hide');
+    clearTimeout(t._t); t._t=setTimeout(()=>t.classList.add('hide'),2500);
+  }
 
-      <div class="section">
-        <h1 style="font-size:18px;margin:0 0 10px">分类图片区管理</h1>
-        <div class="list" id="categoryList"></div>
-        <div class="small">这里可以编辑 Shop by Category 里的每一张分类图片，支持本地上传。</div>
-      </div>
-
-      <div class="section">
-        <h1 style="font-size:18px;margin:0 0 10px">产品管理</h1>
-        <div class="actions">
-          <button class="btn primary" id="addProduct">+ 新增产品</button>
-          <button class="btn secondary" id="refreshPreview">刷新预览</button>
-        </div>
-        <div class="list" id="productList"></div>
-        <div class="small">提示：编辑、删除、上移、下移都支持。图片可上传；产品会自动同步到首页和目录页。</div>
-      </div>
-    </aside>
-
-    <main class="preview">
-      <iframe id="previewFrame" src="index.html"></iframe>
-    </main>
-  </div>
-
-  <div class="overlay" id="overlay">
-    <div class="modal">
-      <h3 id="modalTitle">编辑内容</h3>
-      <p id="modalDesc">修改选中的内容</p>
-      <div id="modalBody"></div>
-      <div class="actions">
-        <button class="btn secondary" id="cancelEdit">取消</button>
-        <button class="btn primary" id="confirmEdit">保存</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const STORAGE_KEY = 'timesrui.visualEditor.products.v3';
-    const CLOUD_BIN_ID = '69be2963b7ec241ddc8aa386';
-    const CLOUD_API_KEY = '$2a$10$jUWgRLevF9MiHDB7l5qgZemlf42Vp3UI4RMuz7ZDUmRTHBc698mP2';
-    const CLOUD_URL = `https://api.jsonbin.io/v3/b/${CLOUD_BIN_ID}`;
-    const defaults = {
-      siteTitle:'Timesrui Resin - Premium Resin Art Supplies & Epoxy Kits',
-      brandName:'TIMESRUI',
-      logoUrl:'logo.svg',
-      announcement:'🎉 FREE SHIPPING on orders over $50 | 11+ Years Manufacturing Experience',
-      heroTitle:'✨ Create Your Own Magic ✨',
-      heroSubtitle:'Premium DIY resin supplies for crafters, artists & dreamers 💕',
-      heroBtn:'Start Creating 🎨',
-      primaryColor:'#ff6b9d',
-      secondaryColor:'#c06c84',
-      heroBg:'#ffeaa7',
-      categories:[
-        {title:'Epoxy Resin', desc:'Crystal clear, perfect for art', image:'', emoji:'💧', bg:'linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%)', link:'catalog.html#epoxy-resin'},
-        {title:'UV Resin', desc:'Quick cure, instant results! ⭐', image:'', emoji:'☀️', bg:'linear-gradient(135deg, #ffd3b6 0%, #ffaaa5 100%)', link:'catalog.html#uv-resin'},
-        {title:'Silicone Molds', desc:'Cute designs, endless creativity', image:'', emoji:'🧁', bg:'linear-gradient(135deg, #ff8b94 0%, #ffaaa5 100%)', link:'catalog.html#silicone-molds'},
-        {title:'DIY Resin Kits', desc:'Everything you need to start!', image:'', emoji:'🎁', bg:'linear-gradient(135deg, #b4a7d6 0%, #ce9ffc 100%)', link:'catalog.html#diy-kits'},
-        {title:'Pigments', desc:'Rainbow colors for your art ⭐', image:'', emoji:'🎨', bg:'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)', link:'catalog.html#pigments'},
-        {title:'DIY Tools', desc:'Make your crafts shine!', image:'', emoji:'✨', bg:'linear-gradient(135deg, #74ebd5 0%, #acb6e5 100%)', link:'catalog.html#diy-tools'}
-      ],
-      instagram:[
-        {image:'', likes:'💕 1.2k', bg:'linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%)'},
-        {image:'', likes:'💕 2.3k', bg:'linear-gradient(135deg, #ff8b94 0%, #ffaaa5 100%)'},
-        {image:'', likes:'💕 856', bg:'linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%)'},
-        {image:'', likes:'💕 3.1k', bg:'linear-gradient(135deg, #ffd3b6 0%, #ffaaa5 100%)'},
-        {image:'', likes:'💕 1.8k', bg:'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)'},
-        {image:'', likes:'💕 2.7k', bg:'linear-gradient(135deg, #b4a7d6 0%, #ce9ffc 100%)'}
-      ],
-      products:[
-        {category:'Epoxy Resin', image:'images/AB Epoxy Resin.png', badge:'Best Seller ⭐', name:'AB Epoxy Resin', desc:'Crystal clear, UV resistant, 1:1 ratio', price:'$29.99', originalPrice:'$39.99'},
-        {category:'UV Resin', image:'images/UV Resin.jpg', badge:'New! 🎉', name:'UV Resin', desc:'Quick cure, instant results! Perfect for beginners', price:'$19.99', originalPrice:''},
-        {category:'Silicone Molds', image:'images/Silicone Molds.png', badge:'', name:'Silicone Molds', desc:'20 adorable designs, super easy!', price:'$24.99', originalPrice:''},
-        {category:'DIY Kits', image:'images/DIY Resin Kits.png', badge:'', name:'DIY Resin Starter Kit', desc:'Everything you need to start crafting!', price:'$34.99', originalPrice:''},
-        {category:'Pigments', image:'images/Pigments & Dyes.webp', badge:'Hot Sale 🔥', name:'Pigments & Dyes', desc:'24 vibrant colors, mica powder', price:'$16.99', originalPrice:'$24.99'},
-        {category:'Tools', image:'images/Glitters & Sparkles.png', badge:'', name:'Glitters & Sparkles', desc:'Make your resin art shine!', price:'$18.99', originalPrice:''},
-        {category:'Tools', image:'images/Dried Flowers.png', badge:'', name:'Dried Flowers', desc:'Natural dried flowers for beautiful resin art', price:'$12.99', originalPrice:''},
-        {category:'Tools', image:'images/Crafting Tools.png', badge:'', name:'Crafting Tools', desc:'Professional tools for perfect results', price:'$22.99', originalPrice:''}
-      ]
-    };
-
-    const state = loadState();
-    const frame = document.getElementById('previewFrame');
-    const overlay = document.getElementById('overlay');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalDesc = document.getElementById('modalDesc');
-    const modalBody = document.getElementById('modalBody');
-    const confirmEdit = document.getElementById('confirmEdit');
-    const cancelEdit = document.getElementById('cancelEdit');
-    const productList = document.getElementById('productList');
-    const categoryList = document.getElementById('categoryList');
-    const toggleEdit = document.getElementById('toggleEdit');
-    let active = null;
-    let editEnabled = true;
-
-    function cloneDefaults(){ return JSON.parse(JSON.stringify(defaults)); }
-    function loadState(){ try { return Object.assign(cloneDefaults(), JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')); } catch { return cloneDefaults(); } }
-    function persist(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-
-    // 云端同步
-    let cloudSyncing = false;
-    let cloudSaveTimer = null;
-
-    function showCloudStatus(msg, color='#16a34a'){
-      let bar = document.getElementById('cloud-status');
-      if (!bar){ bar = document.createElement('div'); bar.id='cloud-status'; bar.style.cssText='position:fixed;bottom:20px;right:20px;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;z-index:99999;transition:opacity .4s;box-shadow:0 4px 15px rgba(0,0,0,.2)'; document.body.appendChild(bar); }
-      bar.style.background = color; bar.style.color = '#fff'; bar.textContent = msg; bar.style.opacity = '1';
-      clearTimeout(bar._t); bar._t = setTimeout(()=>bar.style.opacity='0', 3000);
-    }
-
-    async function cloudSave(){
-      if (cloudSyncing) return;
-      cloudSyncing = true;
-      showCloudStatus('☁️ 正在保存到云端...', '#f59e0b');
-      try {
-        const res = await fetch(`${CLOUD_URL}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'X-Master-Key': CLOUD_API_KEY },
-          body: JSON.stringify(state)
-        });
-        if (!res.ok) throw new Error('保存失败');
-        showCloudStatus('✅ 已同步到云端', '#16a34a');
-      } catch(e) {
-        showCloudStatus('❌ 云端保存失败，数据已保存在本地', '#dc2626');
-      } finally { cloudSyncing = false; }
-    }
-
-    async function cloudLoad(){
-      showCloudStatus('☁️ 正在从云端加载...', '#f59e0b');
-      try {
-        const res = await fetch(`${CLOUD_URL}/latest`, {
-          headers: { 'X-Master-Key': CLOUD_API_KEY }
-        });
-        if (!res.ok) throw new Error('加载失败');
-        const json = await res.json();
-        const data = json.record;
-        if (data && Object.keys(data).length > 2) {
-          Object.assign(state, data);
-          persist();
-          syncPanel();
-          renderProductList();
-          renderPreview();
-          showCloudStatus('✅ 云端数据已加载', '#16a34a');
-        } else {
-          showCloudStatus('📦 云端暂无数据，使用本地配置', '#6b7280');
-        }
-      } catch(e) {
-        showCloudStatus('⚠️ 云端加载失败，使用本地配置', '#f59e0b');
+  /* Cloud */
+  function setCloud(status){
+    const dot=document.getElementById('cloudDot');
+    const txt=document.getElementById('cloudText');
+    if(status==='saving'){ dot.className='cloud-dot saving'; txt.textContent='保存中...'; }
+    else if(status==='saved'){ dot.className='cloud-dot saved'; txt.textContent='已同步'; }
+    else if(status==='error'){ dot.className='cloud-dot error'; txt.textContent='同步失败'; }
+    else{ dot.className='cloud-dot'; txt.textContent='就绪'; }
+  }
+  async function cloudSave(){
+    if(cloudSyncing) return;
+    cloudSyncing=true; setCloud('saving');
+    try{
+      const r=await fetch(CLOUD_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':CLOUD_API_KEY},body:JSON.stringify(state)});
+      if(!r.ok) throw 0;
+      setCloud('saved'); toast('✅ 已同步到云端');
+    }catch{ setCloud('error'); toast('❌ 云端同步失败，数据已保存本地','#ef4444'); }
+    finally{ cloudSyncing=false; }
+  }
+  async function cloudLoad(){
+    setCloud('saving');
+    try{
+      const r=await fetch(`${CLOUD_URL}/latest`,{headers:{'X-Master-Key':CLOUD_API_KEY}});
+      if(!r.ok) throw 0;
+      const json=await r.json();
+      if(json.record && Object.keys(json.record).length>2){
+        state=Object.assign(clone(defaults), json.record);
+        persist(); syncAllPanels(); renderPreview(); toast('✅ 云端数据已加载');
       }
-    }
+      setCloud('saved');
+    }catch{ setCloud('error'); toast('⚠️ 云端加载失败，使用本地配置','#f59e0b'); }
+  }
+  function triggerCloudSave(){ persist(); clearTimeout(cloudSaveTimer); cloudSaveTimer=setTimeout(cloudSave,1500); }
 
-    function persistAndCloudSave(){
-      persist();
-      clearTimeout(cloudSaveTimer);
-      cloudSaveTimer = setTimeout(cloudSave, 1500);
-    }
-    function syncPanel(){ ['siteTitle','brandName','logoUrl','announcement','heroTitle','heroSubtitle','heroBtn','primaryColor','secondaryColor','heroBg'].forEach(k=>document.getElementById(k).value = state[k]); }
-    function bindPanel(){ ['siteTitle','brandName','logoUrl','announcement','heroTitle','heroSubtitle','heroBtn','primaryColor','secondaryColor','heroBg'].forEach(k=>{ document.getElementById(k).addEventListener('input', e=>{ state[k]=e.target.value; persistAndCloudSave(); renderPreview(); }); });
-      const logoFile = document.getElementById('logoFile');
-      if (logoFile) {
-        logoFile.addEventListener('change', async (e)=>{
-          const file = e.target.files && e.target.files[0];
-          if (!file) return;
-          const dataUrl = await fileToDataURL(file);
-          state.logoUrl = dataUrl;
-          document.getElementById('logoUrl').value = dataUrl;
-          persistAndCloudSave();
-          renderPreview();
-          showCloudStatus('✅ LOGO 已上传并同步', '#16a34a');
-        });
-      }
-    }
-    function escapeHtml(s){ return String(s || '').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
-    function fileToDataURL(file){ return new Promise((resolve,reject)=>{ const r = new FileReader(); r.onload = ()=>resolve(r.result); r.onerror = reject; r.readAsDataURL(file); }); }
-
-    function renderCategoryList(){
-      if (!categoryList) return;
-      categoryList.innerHTML = '';
-      state.categories.forEach((c, i)=>{
-        const div = document.createElement('div');
-        div.className = 'item';
-        div.innerHTML = `
-          <div class="meta">
-            <div class="title">${escapeHtml(c.title || '未命名分类')}</div>
-            <div class="sub">${c.image ? '已上传图片' : '使用默认图标'} · ${escapeHtml(c.desc || '')}</div>
-          </div>
-          <div class="tools">
-            <button class="mini-btn edit" data-catedit="${i}">编辑图片</button>
-          </div>
-        `;
-        categoryList.appendChild(div);
-      });
-      categoryList.querySelectorAll('[data-catedit]').forEach(btn=>btn.addEventListener('click', ()=>openCategoryModal(Number(btn.dataset.catedit))));
-    }
-
-    function openCategoryModal(index){
-      const c = state.categories[index];
-      active = {categoryIndex:index};
-      modalTitle.textContent = `编辑分类图片：${c.title}`;
-      modalDesc.textContent = '你可以上传本地图片，也可以修改标题和描述。';
-      modalBody.innerHTML = `
-        <div class="row-1">
-          <div class="group"><label>分类标题</label><input id="cTitle" type="text" value="${escapeHtml(c.title)}"></div>
-          <div class="group"><label>分类描述</label><input id="cDesc" type="text" value="${escapeHtml(c.desc)}"></div>
-          <div class="group"><label>图片地址（可空）</label><input id="cImage" type="text" value="${escapeHtml(c.image || '')}"></div>
-          <div class="group"><label>上传本地图片</label><input id="cFile" type="file" accept="image/*"></div>
-        </div>
-      `;
-      overlay.classList.add('show');
-      const file = document.getElementById('cFile');
-      file.addEventListener('change', async (e)=>{
-        const f = e.target.files && e.target.files[0]; if (!f) return;
-        const url = await fileToDataURL(f);
-        document.getElementById('cImage').value = url;
-      }, {once:true});
-    }
-
-    function renderProductList(){
-      productList.innerHTML = '';
-      state.products.forEach((p, i)=>{
-        const div = document.createElement('div');
-        div.className = 'item';
-        div.innerHTML = `
-          <div class="meta">
-            <div class="title">${escapeHtml(p.name || '未命名产品')}</div>
-            <div class="sub">${escapeHtml(p.category || '未分类')} · ${escapeHtml(p.price || '')}${p.badge ? ' · ' + escapeHtml(p.badge) : ''}</div>
-          </div>
-          <div class="tools">
-            <button class="mini-btn edit" data-edit="${i}">编辑</button>
-            <button class="mini-btn up" data-up="${i}">上移</button>
-            <button class="mini-btn down" data-down="${i}">下移</button>
-            <button class="mini-btn del" data-del="${i}">删</button>
-          </div>
-        `;
-        productList.appendChild(div);
-      });
-      productList.querySelectorAll('[data-edit]').forEach(btn=>btn.addEventListener('click', ()=>openProductModal(Number(btn.dataset.edit))));
-      productList.querySelectorAll('[data-del]').forEach(btn=>btn.addEventListener('click', ()=>deleteProduct(Number(btn.dataset.del))));
-      productList.querySelectorAll('[data-up]').forEach(btn=>btn.addEventListener('click', ()=>moveProduct(Number(btn.dataset.up), -1)));
-      productList.querySelectorAll('[data-down]').forEach(btn=>btn.addEventListener('click', ()=>moveProduct(Number(btn.dataset.down), 1)));
-    }
-
-    function moveProduct(index, delta){
-      const next = index + delta;
-      if (next < 0 || next >= state.products.length) return;
-      const arr = state.products;
-      [arr[index], arr[next]] = [arr[next], arr[index]];
-      persistAndCloudSave(); renderProductList(); renderPreview();
-    }
-
-    function renderPreview(){
-      const doc = frame.contentDocument;
-      if (!doc) return;
-      doc.title = state.siteTitle;
-      const logo = doc.querySelector('.logo-img'); if (logo) logo.src = state.logoUrl;
-      const ann = doc.querySelector('.announcement-bar'); if (ann) ann.textContent = state.announcement;
-      const hero = doc.querySelector('.hero'); if (hero) hero.style.background = `linear-gradient(135deg, ${state.heroBg} 0%, #fab1a0 100%)`;
-      const heroTitle = doc.querySelector('.hero-title'); if (heroTitle) heroTitle.textContent = state.heroTitle;
-      const heroSub = doc.querySelector('.hero-subtitle'); if (heroSub) heroSub.textContent = state.heroSubtitle;
-      const heroBtn = doc.querySelector('.hero .btn-primary'); if (heroBtn) heroBtn.textContent = state.heroBtn;
-      const footer = doc.querySelector('.footer-bottom p'); if (footer) footer.innerHTML = `&copy; 2026 ${escapeHtml(state.brandName)}. All rights reserved. | Custom Manufacturer | Fujian, China`;
-      const brand = doc.querySelector('.nav-logo h1, .logo-text h1'); if (brand) brand.textContent = state.brandName;
-      applyTheme(doc);
-      renderCategories(doc);
-      renderProducts(doc);
-      renderInstagram(doc);
-      enableInlineEditing(doc);
-    }
-
-    function applyTheme(doc){
-      const old = doc.getElementById('ve-theme'); if (old) old.remove();
-      const s = doc.createElement('style'); s.id = 've-theme';
-      s.textContent = `
-        .announcement-bar{background:linear-gradient(135deg, ${state.primaryColor} 0%, ${state.secondaryColor} 100%) !important;}
-        .btn-primary,.btn-secondary,.nav-menu a[href*="editor.html"]{background:linear-gradient(135deg, ${state.primaryColor} 0%, ${state.secondaryColor} 100%) !important;}
-        .section-title,.badge h3,.price,.logo-text h1{background:linear-gradient(135deg, ${state.primaryColor} 0%, ${state.secondaryColor} 100%) !important;-webkit-background-clip:text !important;-webkit-text-fill-color:transparent !important;background-clip:text !important;}
-        .hero{background:linear-gradient(135deg, ${state.heroBg} 0%, #fab1a0 100%) !important;}
-        .preview-editable{outline:2px dashed transparent;outline-offset:3px;cursor:pointer}
-        .preview-editable:hover,.preview-editing .preview-editable{outline-color:${state.primaryColor};box-shadow:0 0 0 4px rgba(255,107,157,.08)}
-        .category-image img,.instagram-card img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit}
-        .category-image{overflow:hidden}
-      `;
-      doc.head.appendChild(s);
-    }
-
-    function renderCategories(doc){
-      const grid = doc.querySelector('.category-grid');
-      if (!grid || !Array.isArray(state.categories)) return;
-      grid.innerHTML = '';
-      state.categories.forEach((c, i)=>{
-        const card = doc.createElement('a');
-        card.href = c.link || '#';
-        card.className = 'category-card';
-        card.dataset.categoryIndex = i;
-        const media = c.image
-          ? `<img src="${escapeHtml(c.image)}" alt="${escapeHtml(c.title)}">`
-          : `<span class="category-emoji">${escapeHtml(c.emoji || '✨')}</span>`;
-        card.innerHTML = `
-          <div class="category-image" style="background:${c.bg || 'linear-gradient(135deg,#eee,#ddd)'};">${media}</div>
-          <h3>${escapeHtml(c.title)}</h3>
-          <p>${escapeHtml(c.desc)}</p>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function renderInstagram(doc){
-      const grid = doc.querySelector('.instagram-grid');
-      if (!grid || !Array.isArray(state.instagram)) return;
-      grid.innerHTML = '';
-      state.instagram.forEach((item, i)=>{
-        const card = doc.createElement('div');
-        card.className = 'instagram-card';
-        card.dataset.instagramIndex = i;
-        card.style.background = item.bg || 'linear-gradient(135deg,#eee,#ddd)';
-        card.innerHTML = `
-          ${item.image ? `<img src="${escapeHtml(item.image)}" alt="community image ${i+1}">` : ''}
-          <div class="instagram-overlay"><span class="instagram-icon">${escapeHtml(item.likes || '')}</span></div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function openInstagramModal(index){
-      const item = state.instagram[index];
-      active = {instagramIndex:index};
-      modalTitle.textContent = `编辑社区图片 #${index+1}`;
-      modalDesc.textContent = '你可以上传本地图片，也可以修改点赞数字。';
-      modalBody.innerHTML = `
-        <div class="row-1">
-          <div class="group"><label>图片地址（可空）</label><input id="igImage" type="text" value="${escapeHtml(item.image || '')}"></div>
-          <div class="group"><label>上传本地图片</label><input id="igFile" type="file" accept="image/*"></div>
-          <div class="group"><label>点赞文案</label><input id="igLikes" type="text" value="${escapeHtml(item.likes || '')}"></div>
-        </div>
-      `;
-      overlay.classList.add('show');
-      const file = document.getElementById('igFile');
-      file.addEventListener('change', async (e)=>{
-        const f = e.target.files && e.target.files[0]; if (!f) return;
-        const url = await fileToDataURL(f);
-        document.getElementById('igImage').value = url;
-      }, {once:true});
-    }
-
-    function renderProducts(doc){
-      const grid = doc.querySelector('.products .product-grid'); if (!grid) return;
-      grid.innerHTML = '';
-      state.products.forEach((p, i)=>{
-        const card = doc.createElement('div');
-        card.className = 'product-card';
-        card.dataset.index = i;
-        card.innerHTML = `
-          ${p.badge ? `<div class="product-badge">${escapeHtml(p.badge)}</div>` : ''}
-          <div class="product-image"><img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}"></div>
-          <h3>${escapeHtml(p.name)}</h3>
-          <p class="product-desc">${escapeHtml(p.desc)}</p>
-          <div class="product-price">
-            <span class="price">${escapeHtml(p.price)}</span>
-            ${p.originalPrice ? `<span class="original-price">${escapeHtml(p.originalPrice)}</span>` : ''}
-          </div>
-          <button class="btn btn-secondary">Add to Cart 🛒</button>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function ensureImageBadge(el, text='点击上传图片'){
-      if (!el || el.querySelector('.image-toolbar')) return;
-      el.style.position = 'relative';
-      const shade = document.createElement('div');
-      shade.className = 'image-action-shade';
-      const badge = document.createElement('div');
-      badge.className = 'image-action-badge';
-      badge.textContent = text;
-      const toolbar = document.createElement('div');
-      toolbar.className = 'image-toolbar';
-      toolbar.innerHTML = `
-        <button class="upload" type="button">上传图片</button>
-        <button class="replace" type="button">更换图片</button>
-        <button class="remove" type="button">删除图片</button>
-      `;
-      toolbar.querySelectorAll('button').forEach(btn=>btn.addEventListener('click', (e)=>{
-        e.preventDefault();
-        e.stopPropagation();
-        if (btn.classList.contains('remove')) {
-          el.dispatchEvent(new CustomEvent('ve-remove-image', { bubbles: false }));
-        } else {
-          el.click();
-        }
-      }));
-      el.appendChild(shade);
-      el.appendChild(badge);
-      el.appendChild(toolbar);
-    }
-
-    function enableInlineEditing(doc){
-      if (!editEnabled) return;
-      doc.body.classList.add('preview-editing');
-      const map = [
-        {sel: '.announcement-bar', key: 'announcement', type:'text', label:'编辑顶部公告'},
-        {sel: '.hero-title', key: 'heroTitle', type:'text', label:'编辑首页主标题'},
-        {sel: '.hero-subtitle', key: 'heroSubtitle', type:'text', label:'编辑首页副标题'},
-        {sel: '.hero .btn-primary', key: 'heroBtn', type:'text', label:'编辑首页按钮'},
-        {sel: '.logo-img', key: 'logoUrl', type:'image', label:'编辑 LOGO 图片'}
-      ];
-      map.forEach(m=>{
-        const el = doc.querySelector(m.sel);
-        if (!el || el.dataset.veBound) return;
-        el.dataset.veBound = '1';
-        el.classList.add('preview-editable');
-        const imageWrap = el.parentElement || el;
-        if (m.type === 'image') {
-          ensureImageBadge(imageWrap, '点击上传LOGO');
-          imageWrap.addEventListener('ve-remove-image', ()=>{ state[m.key] = ''; persistAndCloudSave(); syncPanel(); renderPreview(); }, { once:true });
-        }
-        el.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); openSimpleModal(m.label, m.type, state[m.key], v=>{ state[m.key]=v; persistAndCloudSave(); syncPanel(); renderPreview(); }); }, true);
-      });
-      doc.querySelectorAll('.product-card').forEach(card=>{
-        if (card.dataset.veBound) return;
-        card.dataset.veBound = '1';
-        card.classList.add('preview-editable');
-        ensureImageBadge(card, '点击上传产品图片');
-        card.addEventListener('ve-remove-image', ()=>{ const idx = Number(card.dataset.index); if (!Number.isNaN(idx) && state.products[idx]) { state.products[idx].image = ''; persistAndCloudSave(); renderPreview(); renderProductList(); } }, { once:true });
-        card.addEventListener('click', (e)=>{ if (e.target.closest('button')) return; e.preventDefault(); e.stopPropagation(); openProductModal(Number(card.dataset.index)); }, true);
-      });
-      doc.querySelectorAll('.category-card').forEach(card=>{
-        if (card.dataset.veBound) return;
-        card.dataset.veBound = '1';
-        card.classList.add('preview-editable');
-        ensureImageBadge(card, '点击上传分类图片');
-        card.addEventListener('ve-remove-image', ()=>{ const idx = Number(card.dataset.categoryIndex); if (!Number.isNaN(idx) && state.categories[idx]) { state.categories[idx].image = ''; persistAndCloudSave(); renderPreview(); renderCategoryList(); } }, { once:true });
-        card.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); openCategoryModal(Number(card.dataset.categoryIndex)); }, true);
-      });
-      doc.querySelectorAll('.instagram-card').forEach((card, index)=>{
-        if (card.dataset.veBound) return;
-        card.dataset.veBound = '1';
-        card.classList.add('preview-editable');
-        ensureImageBadge(card, '点击上传社区图片');
-        card.addEventListener('ve-remove-image', ()=>{ if (state.instagram[index]) { state.instagram[index].image = ''; persistAndCloudSave(); renderPreview(); } }, { once:true });
-        card.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); openInstagramModal(index); }, true);
-      });
-    }
-
-    function openSimpleModal(title, type, value, onSave){
-      active = {onSave, type};
-      modalTitle.textContent = title;
-      modalDesc.textContent = type === 'image' ? '你可以直接输入图片地址，或者在下面上传本地图片；保存后会立即同步到首页。' : '修改文本后保存。';
-      modalBody.innerHTML = '';
-      const field = document.createElement(type === 'text' ? 'textarea' : 'input');
-      if (type === 'image') field.type = 'text';
-      field.value = value || '';
-      modalBody.appendChild(field);
-      if (type === 'image') {
-        const wrap = document.createElement('div');
-        wrap.className = 'group';
-        wrap.style.marginTop = '10px';
-        wrap.innerHTML = '<label>上传本地图片</label><input id="modalImageUpload" type="file" accept="image/*">';
-        modalBody.appendChild(wrap);
-        const uploader = wrap.querySelector('#modalImageUpload');
-        uploader.addEventListener('change', async (e)=>{
-          const file = e.target.files && e.target.files[0];
-          if (!file) return;
-          const dataUrl = await fileToDataURL(file);
-          field.value = dataUrl;
-        });
-      }
-      overlay.classList.add('show');
-    }
-
-    function openProductModal(index){
-      const p = state.products[index] || {category:'Tools', image:'',badge:'',name:'',desc:'',price:'',originalPrice:''};
-      active = {productIndex:index};
-      modalTitle.textContent = index >= state.products.length ? '新增产品' : `编辑产品 #${index + 1}`;
-      modalDesc.textContent = '可修改产品图片、标题、描述、价格、分类，并支持上传图片。';
-      modalBody.innerHTML = `
-        <div class="row">
-          <div class="group"><label>产品分类</label><input id="pCategory" type="text" value="${escapeHtml(p.category || 'Tools')}"></div>
-          <div class="group"><label>产品名称</label><input id="pName" type="text" value="${escapeHtml(p.name)}"></div>
-        </div>
-        <div class="row">
-          <div class="group"><label>价格</label><input id="pPrice" type="text" value="${escapeHtml(p.price)}"></div>
-          <div class="group"><label>原价（可空）</label><input id="pOriginal" type="text" value="${escapeHtml(p.originalPrice || '')}"></div>
-        </div>
-        <div class="row-1">
-          <div class="group"><label>角标（可空）</label><input id="pBadge" type="text" value="${escapeHtml(p.badge || '')}"></div>
-          <div class="group"><label>描述</label><textarea id="pDesc">${escapeHtml(p.desc)}</textarea></div>
-          <div class="group"><label>图片地址</label><input id="pImage" type="text" value="${escapeHtml(p.image)}"></div>
-          <div class="group"><label>上传图片</label><input id="pFile" type="file" accept="image/*"></div>
-          <div class="small muted">上传后会直接保存为 base64 到本地配置，刷新不丢失。</div>
-        </div>
-      `;
-      overlay.classList.add('show');
-      const file = document.getElementById('pFile');
-      file.addEventListener('change', async ()=>{
-        const f = file.files && file.files[0]; if (!f) return;
-        const url = await fileToDataURL(f);
-        document.getElementById('pImage').value = url;
-      }, {once:true});
-    }
-
-    confirmEdit.addEventListener('click', ()=>{
-      if (!active) return;
-      if (active.onSave){
-        const field = modalBody.querySelector('input,textarea');
-        active.onSave(field ? field.value : '');
-      } else if (typeof active.categoryIndex === 'number') {
-        state.categories[active.categoryIndex] = {
-          ...state.categories[active.categoryIndex],
-          title: document.getElementById('cTitle').value.trim(),
-          desc: document.getElementById('cDesc').value.trim(),
-          image: document.getElementById('cImage').value.trim()
-        };
-        persistAndCloudSave(); renderCategoryList(); renderPreview();
-      } else if (typeof active.instagramIndex === 'number') {
-        state.instagram[active.instagramIndex] = {
-          ...state.instagram[active.instagramIndex],
-          image: document.getElementById('igImage').value.trim(),
-          likes: document.getElementById('igLikes').value.trim()
-        };
-        persistAndCloudSave(); renderPreview();
-      } else if (typeof active.productIndex === 'number') {
-        const p = {
-          category: document.getElementById('pCategory').value.trim() || 'Tools',
-          name: document.getElementById('pName').value.trim(),
-          price: document.getElementById('pPrice').value.trim(),
-          originalPrice: document.getElementById('pOriginal').value.trim(),
-          badge: document.getElementById('pBadge').value.trim(),
-          desc: document.getElementById('pDesc').value.trim(),
-          image: document.getElementById('pImage').value.trim()
-        };
-        if (active.productIndex >= state.products.length) state.products.push(p);
-        else state.products[active.productIndex] = p;
-        persistAndCloudSave(); renderProductList(); renderPreview();
-      }
-      overlay.classList.remove('show');
-      active = null;
+  /* 面板切换 */
+  document.querySelectorAll('.menu-item').forEach(item=>{
+    item.addEventListener('click',()=>{
+      document.querySelectorAll('.menu-item').forEach(i=>i.classList.remove('active'));
+      document.querySelectorAll('.panel-tab').forEach(t=>t.classList.remove('active'));
+      item.classList.add('active');
+      const tab=item.dataset.tab;
+      document.getElementById('tab-'+tab).classList.add('active');
+      document.getElementById('panelTitle').textContent=PANEL_META[tab].title;
+      document.getElementById('panelDesc').textContent=PANEL_META[tab].desc;
     });
-    cancelEdit.addEventListener('click', ()=>overlay.classList.remove('show'));
-    overlay.addEventListener('click', e=>{ if (e.target === overlay) overlay.classList.remove('show'); });
+  });
 
-    function deleteProduct(index){ if (!confirm(`确定删除第 ${index+1} 个产品吗？`)) return; state.products.splice(index, 1); persistAndCloudSave(); renderProductList(); renderPreview(); }
+  /* 同步面板 */
+  function syncAllPanels(){
+    ['siteTitle','brandName','announcement','heroTitle','heroSubtitle','heroBtn','footerCompany','logoUrl','primaryColor','secondaryColor'].forEach(k=>{
+      const el=document.getElementById(k); if(el) el.value=state[k]||'';
+    });
+    document.getElementById('heroBg').value=state.heroBg||'#ffeaa7';
+    document.getElementById('heroBg2').value=state.heroBg||'#ffeaa7';
+    updateLogoPreview();
+    renderCategoryList();
+    renderProductList();
+    renderIgGrid();
+  }
 
-    document.getElementById('saveAll').addEventListener('click', ()=>{ persistAndCloudSave(); renderPreview(); showCloudStatus('☁️ 正在同步...', '#f59e0b'); });
-    document.getElementById('resetAll').addEventListener('click', ()=>{ Object.assign(state, cloneDefaults()); persistAndCloudSave(); syncPanel(); renderCategoryList(); renderProductList(); renderPreview(); });
-    document.getElementById('exportJson').addEventListener('click', ()=>{ const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'timesrui-config.json'; a.click(); });
-    document.getElementById('addProduct').addEventListener('click', ()=>openProductModal(state.products.length));
-    document.getElementById('refreshPreview').addEventListener('click', renderPreview);
-    toggleEdit.addEventListener('click', ()=>{ editEnabled = !editEnabled; toggleEdit.textContent = `编辑模式：${editEnabled ? '开' : '关'}`; toggleEdit.classList.toggle('on', editEnabled); const doc = frame.contentDocument; if (doc) doc.body.classList.toggle('preview-editing', editEnabled); });
+  /* 面板事件绑定 */
+  function bindPanels(){
+    ['siteTitle','brandName','announcement','heroTitle','heroSubtitle','heroBtn','footerCompany','logoUrl'].forEach(k=>{
+      const el=document.getElementById(k);
+      if(el) el.addEventListener('input',e=>{ state[k]=e.target.value; triggerCloudSave(); renderPreview(); });
+    });
+    ['primaryColor','secondaryColor'].forEach(k=>{
+      const el=document.getElementById(k);
+      if(el) el.addEventListener('input',e=>{ state[k]=e.target.value; triggerCloudSave(); renderPreview(); });
+    });
+    document.getElementById('heroBg').addEventListener('input',e=>{ state.heroBg=e.target.value; document.getElementById('heroBg2').value=e.target.value; triggerCloudSave(); renderPreview(); });
+    document.getElementById('heroBg2').addEventListener('input',e=>{ state.heroBg=e.target.value; document.getElementById('heroBg').value=e.target.value; triggerCloudSave(); renderPreview(); });
+    document.getElementById('logoFile').addEventListener('change',async e=>{
+      const f=e.target.files&&e.target.files[0]; if(!f) return;
+      const url=await file2url(f);
+      state.logoUrl=url; document.getElementById('logoUrl').value=url;
+      updateLogoPreview(); triggerCloudSave(); renderPreview(); toast('✅ LOGO 已上传');
+    });
+    document.getElementById('saveBtn').addEventListener('click',()=>cloudSave());
+    document.getElementById('refreshBtn').addEventListener('click',()=>renderPreview());
+    document.getElementById('addProductBtn').addEventListener('click',()=>openProductModal(null));
+    document.getElementById('toggleEdit').addEventListener('click',()=>{
+      editEnabled=!editEnabled;
+      const btn=document.getElementById('toggleEdit');
+      btn.textContent=`编辑模式 ${editEnabled?'开':'关'}`;
+      btn.classList.toggle('on',editEnabled);
+      const doc=frame.contentDocument;
+      if(doc) doc.body.classList.toggle('preview-editing',editEnabled);
+    });
+  }
 
-    bindPanel(); syncPanel(); renderCategoryList(); renderProductList();
-    frame.addEventListener('load', renderPreview);
-    if (frame.contentDocument && frame.contentDocument.readyState === 'complete') renderPreview();
-    // 启动时从云端加载最新数据
-    cloudLoad();
-  </script>
+  function updateLogoPreview(){
+    const box=document.getElementById('logoPreviewBox');
+    if(!box) return;
+    if(state.logoUrl){ box.innerHTML=`<img src="${esc(state.logoUrl)}" style="max-height:120px;max-width:100%;object-fit:contain">`; }
+    else{ box.innerHTML='<span class="placeholder">🖼️</span>'; }
+  }
+
+  /* 分类列表 */
+  function renderCategoryList(){
+    const list=document.getElementById('categoryList'); if(!list) return;
+    list.innerHTML='';
+    (state.categories||[]).forEach((c,i)=>{
+      const div=document.createElement('div'); div.className='cat-item';
+      const thumb=c.image?`<div class="cat-thumb"><img src="${esc(c.image)}"></div>`:`<div class="cat-thumb" style="background:${c.bg||'#eee'}">${c.emoji||'✨'}</div>`;
+      div.innerHTML=`${thumb}<div class="info"><div class="name">${esc(c.title)}</div><div class="sub">${esc(c.desc)}</div></div><span style="color:#d1d5db;font-size:18px">›</span>`;
+      div.addEventListener('click',()=>openCategoryModal(i));
+      list.appendChild(div);
+    });
+  }
+
+  /* 产品列表 */
+  function renderProductList(){
+    const list=document.getElementById('productList'); if(!list) return;
+    list.innerHTML='';
+    (state.products||[]).forEach((p,i)=>{
+      const div=document.createElement('div'); div.className='product-item';
+      const img=p.image?`<img src="${esc(p.image)}" alt="">`:`<div class="no-img">📦</div>`;
+      div.innerHTML=`${img}<div class="info"><div class="name">${esc(p.name||'未命名')}</div><div class="meta">${esc(p.price||'')}${p.badge?' · '+esc(p.badge):''}</div></div><div class="actions"><button class="icon-btn up" data-up="${i}">↑</button><button class="icon-btn down" data-down="${i}">↓</button><button class="icon-btn edit" data-edit="${i}">编辑</button><button class="icon-btn del" data-del="${i}">删</button></div>`;
+      list.appendChild(div);
+    });
+    list.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>openProductModal(Number(b.dataset.edit))));
+    list.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>deleteProduct(Number(b.dataset.del))));
+    list.querySelectorAll('[data-up]').forEach(b=>b.addEventListener('click',()=>moveProduct(Number(b.dataset.up),-1)));
+    list.querySelectorAll('[data-down]').forEach(b=>b.addEventListener('click',()=>moveProduct(Number(b.dataset.down),1)));
+  }
+
+  function deleteProduct(i){ if(!confirm(`确定删除"${state.products[i]?.name||'该产品'}"？`)) return; state.products.splice(i,1); triggerCloudSave(); renderProductList(); renderPreview(); toast('🗑️ 已删除'); }
+  function moveProduct(i,d){ const n=i+d; if(n<0||n>=state.products.length) return; [state.products[i],state.products[n]]=[state.products[n],state.products[i]]; triggerCloudSave(); renderProductList(); renderPreview(); }
+
+  /* 社区图片 */
+  function renderIgGrid(){
+    const grid=document.getElementById('igGrid'); if(!grid) return;
+    grid.innerHTML='';
+    (state.instagram||[]).forEach((item,i)=>{
+      const div=document.createElement('div'); div.className='ig-item';
+      div.style.background=item.bg||'#eee';
+      div.innerHTML=item.image?`<img src="${esc(item.image)}">`:`<div class="ig-bg">${esc(item.likes||'')}</div>`;
+      div.innerHTML+=`<div class="edit-badge">点击上传</div>`;
+      div.addEventListener('click',()=>openIgModal(i));
+      grid.appendChild(div);
+    });
+  }
+
+  /* 弹窗通用 */
+  function openModal(title, bodyHtml, onConfirm){
+    document.getElementById('modalTitle').textContent=title;
+    document.getElementById('modalBody').innerHTML=bodyHtml;
+    document.getElementById('overlay').classList.add('show');
+    activeModal=onConfirm;
+  }
+  function closeModal(){ document.getElementById('overlay').classList.remove('show'); activeModal=null; }
+  document.getElementById('modalClose').addEventListener('click',closeModal);
+  document.getElementById('modalCancel').addEventListener('click',closeModal);
+  document.getElementById('overlay').addEventListener('click',e=>{ if(e.target===document.getElementById('overlay')) closeModal(); });
+  document.getElementById('modalConfirm').addEventListener('click',()=>{ if(activeModal) activeModal(); });
+
+  /* 分类弹窗 */
+  function openCategoryModal(i){
+    const c=state.categories[i];
+    openModal(`编辑分类：${c.title}`,`
+      <div class="img-preview-box" id="cImgBox">${c.image?`<img src="${esc(c.image)}">`:'<span class="placeholder">🖼️</span>'}</div>
+      <label class="upload-btn" style="margin-bottom:12px"><input type="file" id="cFile" accept="image/*"><span>📁</span> 上传分类图片</label>
+      <div class="form-group"><label>图片地址</label><input id="cImage" type="text" value="${esc(c.image||'')}"></div>
+      <div class="form-group"><label>分类标题</label><input id="cTitle" type="text" value="${esc(c.title)}"></div>
+      <div class="form-group"><label>分类描述</label><input id="cDesc" type="text" value="${esc(c.desc)}"></div>
+    `,()=>{
+      state.categories[i]={...c, title:document.getElementById('cTitle').value, desc:document.getElementById('cDesc').value, image:document.getElementById('cImage').value};
+      triggerCloudSave(); renderCategoryList(); renderPreview(); closeModal(); toast('✅ 分类已保存');
+    });
+    document.getElementById('cFile').addEventListener('change',async e=>{
+      const f=e.target.files&&e.target.files[0]; if(!f) return;
+      const url=await file2url(f);
+      document.getElementById('cImage').value=url;
+      document.getElementById('cImgBox').innerHTML=`<img src="${url}" style="max-height:150px;object-fit:contain">`;
+    });
+    document.getElementById('cImage').addEventListener('input',e=>{
+      document.getElementById('cImgBox').innerHTML=e.target.value?`<img src="${esc(e.target.value)}" style="max-height:150px;object-fit:contain">`:'<span class="placeholder">🖼️</span>';
+    });
+  }
+
+  /* 产品弹窗 */
+  function openProductModal(i){
+    const isNew = i===null;
+    const p = isNew ? {category:'',image:'',badge:'',name:'',desc:'',price:'',originalPrice:''} : state.products[i];
+    openModal(isNew?'添加新产品':`编辑产品：${p.name}`,`
+      <div class="img-preview-box" id="pImgBox">${p.image?`<img src="${esc(p.image)}">`:'<span class="placeholder">📦</span>'}</div>
+      <label class="upload-btn" style="margin-bottom:12px"><input type="file" id="pFile" accept="image/*"><span>📁</span> 上传产品图片</label>
+      <div class="form-group"><label>图片地址</label><input id="pImage" type="text" value="${esc(p.image)}"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-group"><label>产品名称</label><input id="pName" type="text" value="${esc(p.name)}"></div>
+        <div class="form-group"><label>分类</label><input id="pCategory" type="text" value="${esc(p.category)}"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div class="form-group"><label>价格</label><input id="pPrice" type="text" value="${esc(p.price)}"></div>
+        <div class="form-group"><label>原价（可空）</label><input id="pOriginal" type="text" value="${esc(p.originalPrice||'')}"></div>
+        <div class="form-group"><label>角标（可空）</label><input id="pBadge" type="text" value="${esc(p.badge||'')}"></div>
+      </div>
+      <div class="form-group"><label>描述</label><textarea id="pDesc">${esc(p.desc)}</textarea></div>
+    `,()=>{
+      const np={category:document.getElementById('pCategory').value.trim(),image:document.getElementById('pImage').value.trim(),badge:document.getElementById('pBadge').value.trim(),name:document.getElementById('pName').value.trim(),desc:document.getElementById('pDesc').value.trim(),price:document.getElementById('pPrice').value.trim(),originalPrice:document.getElementById('pOriginal').value.trim()};
+      if(isNew) state.products.push(np); else state.products[i]=np;
+      triggerCloudSave(); renderProductList(); renderPreview(); closeModal(); toast(isNew?'✅ 产品已添加':'✅ 产品已保存');
+    });
+    document.getElementById('pFile').addEventListener('change',async e=>{
+      const f=e.target.files&&e.target.files[0]; if(!f) return;
+      const url=await file2url(f);
+      document.getElementById('pImage').value=url;
+      document.getElementById('pImgBox').innerHTML=`<img src="${url}" style="max-height:150px;object-fit:contain">`;
+    });
+    document.getElementById('pImage').addEventListener('input',e=>{
+      document.getElementById('pImgBox').innerHTML=e.target.value?`<img src="${esc(e.target.value)}" style="max-height:150px;object-fit:contain">`:'<span class="placeholder">📦</span>';
+    });
+  }
+
+  /* 社区图片弹窗 */
+  function openIgModal(i){
+    const item=state.instagram[i];
+    openModal(`编辑社区图片 #${i+1}`,`
+      <div class="img-preview-box" id="igImgBox">${item.image?`<img src="${esc(item.image)}">`:'<span class="placeholder">💕</span>'}</div>
+      <label class="upload-btn" style="margin-bottom:12px"><input type="file" id="igFile" accept="image/*"><span>📁</span> 上传社区图片</label>
+      <div class="form-group"><label>图片地址</label><input id="igImage" type="text" value="${esc(item.image||'')}"></div>
+      <div class="form-group"><label>点赞文案</label><input id="igLikes" type="text" value="${esc(item.likes||'')}"></div>
+    `,()=>{
+      state.instagram[i]={...item,image:document.getElementById('igImage').value.trim(),likes:document.getElementById('igLikes').value.trim()};
+      triggerCloudSave(); renderIgGrid(); renderPreview(); closeModal(); toast('✅ 社区图片已保存');
+    });
+    document.getElementById('igFile').addEventListener('change',async e=>{
+      const f=e.target.files&&e.target.files[0]; if(!f) return;
+      const url=await file2url(f);
+      document.getElementById('igImage').value=url;
+      document.getElementById('igImgBox').innerHTML=`<img src="${url}" style="max-height:150px;object-fit:contain">`;
+    });
+    document.getElementById('igImage').addEventListener('input',e=>{
+      document.getElementById('igImgBox').innerHTML=e.target.value?`<img src="${esc(e.target.value)}" style="max-height:150px;object-fit:contain">`:'<span class="placeholder">💕</span>';
+    });
+  }
+
+  /* 右侧预览渲染 */
+  function renderPreview(){
+    const doc=frame.contentDocument; if(!doc) return;
+    doc.title=state.siteTitle||'';
+    const logo=doc.querySelector('.logo-img'); if(logo) logo.src=state.logoUrl||'';
+    const ann=doc.querySelector('.announcement-bar'); if(ann) ann.textContent=state.announcement||'';
+    const hero=doc.querySelector('.hero'); if(hero) hero.style.background=`linear-gradient(135deg,${state.heroBg||'#ffeaa7'} 0%,#fab1a0 100%)`;
+    const ht=doc.querySelector('.hero-title'); if(ht) ht.textContent=state.heroTitle||'';
+    const hs=doc.querySelector('.hero-subtitle'); if(hs) hs.textContent=state.heroSubtitle||'';
+    const hb=doc.querySelector('.hero .btn-primary'); if(hb) hb.textContent=state.heroBtn||'';
+    const fb=doc.querySelector('.footer-bottom p'); if(fb) fb.innerHTML=`&copy; 2026 ${esc(state.footerCompany||'')}. All rights reserved.`;
+    applyTheme(doc); renderPreviewCategories(doc); renderPreviewProducts(doc); renderPreviewInstagram(doc); bindPreviewClicks(doc);
+  }
+  function applyTheme(doc){
+    const old=doc.getElementById('ve-theme'); if(old) old.remove();
+    const s=doc.createElement('style'); s.id='ve-theme';
+    s.textContent=`.announcement-bar{background:linear-gradient(135deg,${state.primaryColor},${state.secondaryColor}) !important;}.btn-primary,.btn-secondary{background:linear-gradient(135deg,${state.primaryColor},${state.secondaryColor}) !important;}.section-title,.badge h3,.price{background:linear-gradient(135deg,${state.primaryColor},${state.secondaryColor}) !important;-webkit-background-clip:text !important;-webkit-text-fill-color:transparent !important;background-clip:text !important;}.hero{background:linear-gradient(135deg,${state.heroBg},#fab1a0) !important;}.ve-editable{outline:2px dashed transparent;outline-offset:3px;cursor:pointer;transition:outline .2s;position:relative}.preview-editing .ve-editable:hover{outline-color:${state.primaryColor};}.ve-img-toolbar{position:absolute;inset:auto 10px 10px auto;display:flex;gap:6px;opacity:0;transform:translateY(8px);transition:all .2s;z-index:9}.preview-editing .ve-editable:hover .ve-img-toolbar{opacity:1;transform:translateY(0)}.ve-img-btn{border:0;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.2)}.ve-img-btn.upload{background:${state.primaryColor};color:#fff}.ve-img-btn.del{background:#fff;color:#dc2626}.ve-shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.15),transparent);border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .2s}.preview-editing .ve-editable:hover .ve-shade{opacity:1}`;
+    doc.head.appendChild(s);
+  }
+  function renderPreviewCategories(doc){
+    const grid=doc.querySelector('.category-grid'); if(!grid) return; grid.innerHTML='';
+    (state.categories||[]).forEach((c,i)=>{
+      const a=doc.createElement('a'); a.href=c.link||'#'; a.className='category-card ve-editable'; a.dataset.catIdx=i;
+      const media=c.image?`<img src="${esc(c.image)}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">`:`<span class="category-emoji">${esc(c.emoji||'✨')}</span>`;
+      a.innerHTML=`<div class="category-image" style="background:${c.bg||'#eee'};overflow:hidden">${media}<div class="ve-shade"></div><div class="ve-img-toolbar"><button class="ve-img-btn upload" type="button">上传图片</button><button class="ve-img-btn del" type="button">删除</button></div></div><h3>${esc(c.title)}</h3><p>${esc(c.desc)}</p>`;
+      grid.appendChild(a);
+    });
+  }
+  function renderPreviewProducts(doc){
+    const grid=doc.querySelector('.products .product-grid'); if(!grid) return; grid.innerHTML='';
+    (state.products||[]).forEach((p,i)=>{
+      const card=doc.createElement('div'); card.className='product-card ve-editable'; card.dataset.prodIdx=i;
+      card.innerHTML=`${p.badge?`<div class="product-badge">${esc(p.badge)}</div>`:''}<div class="product-image"><img src="${esc(p.image)}" alt="${esc(p.name)}"></div><h3>${esc(p.name)}</h3><p class="product-desc">${esc(p.desc)}</p><div class="product-price"><span class="price">${esc(p.price)}</span>${p.originalPrice?`<span class="original-price">${esc(p.originalPrice)}</span>`:''}</div><button class="btn btn-secondary">Add to Cart 🛒</button><div class="ve-shade"></div><div class="ve-img-toolbar"><button class="ve-img-btn upload" type="button">编辑产品</button><button class="ve-img-btn del" type="button">删除</button></div>`;
+      grid.appendChild(card);
+    });
+  }
+  function renderPreviewInstagram(doc){
+    const grid=doc.querySelector('.instagram-grid'); if(!grid) return; grid.innerHTML='';
+    (state.instagram||[]).forEach((item,i)=>{
+      const div=doc.createElement('div'); div.className='instagram-card ve-editable'; div.dataset.igIdx=i;
+      div.style.background=item.bg||'#eee';
+      div.innerHTML=`${item.image?`<img src="${esc(item.image)}" style="width:100%;height:100%;object-fit:cover">`:''}<div class="instagram-overlay"><span class="instagram-icon">${esc(item.likes||'')}</span></div><div class="ve-shade"></div><div class="ve-img-toolbar"><button class="ve-img-btn upload" type="button">上传图片</button></div>`;
+      grid.appendChild(div);
+    });
+  }
+  function bindPreviewClicks(doc){
+    if(!editEnabled) return;
+    doc.body.classList.add('preview-editing');
+    doc.querySelectorAll('.ve-editable').forEach(el=>{
+      if(el.dataset.veBound) return; el.dataset.veBound='1';
+      el.addEventListener('click',e=>{
+        if(e.target.closest('button.btn')) return;
+        e.preventDefault(); e.stopPropagation();
+        if(el.dataset.catIdx!=null) openCategoryModal(Number(el.dataset.catIdx));
+        else if(el.dataset.prodIdx!=null) openProductModal(Number(el.dataset.prodIdx));
+        else if(el.dataset.igIdx!=null) openIgModal(Number(el.dataset.igIdx));
+      },true);
+    });
+    const logoEl=doc.querySelector('.logo-img');
+    if(logoEl&&!logoEl.dataset.veBound){
+      logoEl.dataset.veBound='1';
+      logoEl.style.cursor='pointer';
+      logoEl.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); document.querySelector('.menu-item[data-tab="images"]').click(); }, true);
+    }
+  }
+
+  frame.addEventListener('load',renderPreview);
+  if(frame.contentDocument&&frame.contentDocument.readyState==='complete') renderPreview();
+  bindPanels(); syncAllPanels(); cloudLoad();
+</script>
 </body>
 </html>
