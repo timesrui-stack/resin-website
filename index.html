@@ -1,338 +1,533 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timesrui Resin - Premium Resin Art Supplies & Epoxy Kits</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timesrui Resin - Premium Resin Art Supplies & Epoxy Kits</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;color:#1a1a1a;background:#fff;overflow-x:hidden}
+
+    /* 顶部公告 */
+    .announcement-bar{background:#1a1a1a;color:#fff;text-align:center;padding:10px 20px;font-size:13px;font-weight:500;letter-spacing:.3px}
+    .announcement-bar a{color:#fff;text-decoration:underline}
+
+    /* 导航 */
+    .navbar{background:#fff;border-bottom:1px solid #e8e8e8;position:sticky;top:0;z-index:1000}
+    .nav-inner{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;align-items:center;height:64px;gap:40px}
+    .nav-logo img{height:48px;width:auto;display:block}
+    .nav-logo .text-logo{font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#1a1a1a}
+    .nav-links{display:flex;list-style:none;gap:28px;flex:1}
+    .nav-links a{text-decoration:none;color:#333;font-size:14px;font-weight:500;transition:color .2s}
+    .nav-links a:hover{color:#ff6b6b}
+    .nav-actions{display:flex;align-items:center;gap:16px;margin-left:auto}
+    .nav-actions .icon-btn{background:none;border:none;cursor:pointer;font-size:20px;color:#1a1a1a;position:relative;transition:color .2s}
+    .nav-actions .icon-btn:hover{color:#ff6b6b}
+    .cart-badge{position:absolute;top:-6px;right:-6px;background:#ff6b6b;color:#fff;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+    .nav-editor-btn{background:#1a1a1a;color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .2s}
+    .nav-editor-btn:hover{background:#ff6b6b}
+
+    /* Hero */
+    .hero{background:#f7f3ee;min-height:580px;display:grid;grid-template-columns:1fr 1fr;align-items:center;overflow:hidden}
+    .hero-text{padding:60px 64px;max-width:600px}
+    .hero-eyebrow{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#ff6b6b;margin-bottom:16px}
+    .hero-title{font-size:52px;font-weight:800;line-height:1.1;letter-spacing:-1.5px;color:#1a1a1a;margin-bottom:20px}
+    .hero-title span{color:#ff6b6b}
+    .hero-desc{font-size:16px;color:#555;line-height:1.7;margin-bottom:32px;max-width:440px}
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn-primary{background:#1a1a1a;color:#fff;border:none;padding:14px 32px;border-radius:6px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+    .btn-primary:hover{background:#ff6b6b;transform:translateY(-1px)}
+    .btn-outline{background:transparent;color:#1a1a1a;border:2px solid #1a1a1a;padding:13px 28px;border-radius:6px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center}
+    .btn-outline:hover{border-color:#ff6b6b;color:#ff6b6b}
+    .hero-image{height:580px;overflow:hidden;background:#ede8e0;display:flex;align-items:center;justify-content:center}
+    .hero-image img{width:100%;height:100%;object-fit:cover}
+    .hero-image .hero-placeholder{font-size:80px;opacity:.3}
+
+    /* 信任徽章 */
+    .trust-bar{border-top:1px solid #eee;border-bottom:1px solid #eee;background:#fff}
+    .trust-inner{max-width:1280px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);divide-x:1px solid #eee}
+    .trust-item{display:flex;align-items:center;gap:14px;padding:24px 32px;border-right:1px solid #eee}
+    .trust-item:last-child{border-right:0}
+    .trust-icon{font-size:28px;flex-shrink:0}
+    .trust-text strong{display:block;font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:2px}
+    .trust-text span{font-size:12px;color:#888;line-height:1.4}
+
+    /* 分类区 */
+    .section{padding:72px 24px}
+    .section-inner{max-width:1280px;margin:0 auto}
+    .section-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px}
+    .section-title{font-size:32px;font-weight:800;letter-spacing:-0.8px;color:#1a1a1a}
+    .section-link{font-size:14px;color:#ff6b6b;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:4px}
+    .section-link:hover{text-decoration:underline}
+    .cat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+    .cat-card{text-align:center;cursor:pointer;text-decoration:none;color:inherit;transition:transform .2s}
+    .cat-card:hover{transform:translateY(-4px)}
+    .cat-img{width:100%;aspect-ratio:1;border-radius:12px;overflow:hidden;margin-bottom:12px;background:#f5f5f5;display:flex;align-items:center;justify-content:center}
+    .cat-img img{width:100%;height:100%;object-fit:cover}
+    .cat-img .cat-emoji{font-size:40px}
+    .cat-card h3{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+    .cat-card p{font-size:12px;color:#888}
+
+    /* 产品区 */
+    .products-section{background:#fafafa;padding:72px 24px}
+    .product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+    .product-card{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #f0f0f0;transition:all .25s;cursor:pointer;position:relative}
+    .product-card:hover{box-shadow:0 12px 40px rgba(0,0,0,.1);transform:translateY(-4px)}
+    .product-img{width:100%;aspect-ratio:1;overflow:hidden;background:#f8f8f8;position:relative}
+    .product-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+    .product-card:hover .product-img img{transform:scale(1.05)}
+    .product-badge{position:absolute;top:12px;left:12px;padding:5px 10px;border-radius:4px;font-size:11px;font-weight:700;z-index:1}
+    .product-badge.bestseller{background:#ff6b6b;color:#fff}
+    .product-badge.new{background:#1a1a1a;color:#fff}
+    .product-badge.sale{background:#ff6b6b;color:#fff}
+    .product-badge.hot{background:#ff8c00;color:#fff}
+    .product-info{padding:16px}
+    .product-name{font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:6px;line-height:1.3}
+    .product-desc{font-size:12px;color:#888;margin-bottom:12px;line-height:1.5}
+    .product-bottom{display:flex;align-items:center;justify-content:space-between}
+    .product-price{display:flex;align-items:baseline;gap:8px}
+    .price-now{font-size:18px;font-weight:800;color:#1a1a1a}
+    .price-was{font-size:13px;color:#bbb;text-decoration:line-through}
+    .add-cart-btn{background:#1a1a1a;color:#fff;border:none;width:36px;height:36px;border-radius:6px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0}
+    .add-cart-btn:hover{background:#ff6b6b}
+
+    /* 新品区 */
+    .new-arrivals{padding:72px 24px}
+
+    /* 社区图片 */
+    .community{padding:72px 24px;background:#fafafa}
+    .ig-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:36px}
+    .ig-card{aspect-ratio:1;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;background:#f0f0f0}
+    .ig-card img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+    .ig-card:hover img{transform:scale(1.05)}
+    .ig-overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+    .ig-card:hover .ig-overlay{opacity:1}
+    .ig-overlay span{color:#fff;font-size:13px;font-weight:700}
+    .ig-card .ig-bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.6);font-size:13px;font-weight:700}
+
+    /* 订阅 */
+    .newsletter{padding:80px 24px;background:#1a1a1a;text-align:center}
+    .newsletter h2{font-size:36px;font-weight:800;color:#fff;margin-bottom:12px;letter-spacing:-0.8px}
+    .newsletter p{font-size:16px;color:#aaa;margin-bottom:32px}
+    .newsletter-form{display:flex;max-width:480px;margin:0 auto;gap:0}
+    .newsletter-form input{flex:1;padding:14px 20px;border:none;font-size:14px;border-radius:6px 0 0 6px;outline:none}
+    .newsletter-form button{background:#ff6b6b;color:#fff;border:none;padding:14px 24px;font-size:14px;font-weight:700;cursor:pointer;border-radius:0 6px 6px 0;white-space:nowrap;transition:background .2s}
+    .newsletter-form button:hover{background:#e55555}
+
+    /* Footer */
+    .footer{background:#111;color:#aaa;padding:60px 24px 24px}
+    .footer-inner{max-width:1280px;margin:0 auto}
+    .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+    .footer-brand .logo{font-size:20px;font-weight:800;color:#fff;margin-bottom:12px}
+    .footer-brand p{font-size:13px;line-height:1.7;max-width:280px}
+    .footer-col h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px}
+    .footer-col ul{list-style:none}
+    .footer-col ul li{margin-bottom:10px}
+    .footer-col ul li a{color:#aaa;text-decoration:none;font-size:13px;transition:color .2s}
+    .footer-col ul li a:hover{color:#fff}
+    .footer-bottom{border-top:1px solid #222;padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:12px}
+    .footer-bottom a{color:#aaa;text-decoration:none}
+
+    /* 通知 */
+    .toast-notify{position:fixed;bottom:24px;right:24px;background:#1a1a1a;color:#fff;padding:14px 20px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.2);transform:translateY(100px);opacity:0;transition:all .3s}
+    .toast-notify.show{transform:translateY(0);opacity:1}
+
+    /* 响应式 */
+    @media(max-width:1024px){
+      .cat-grid{grid-template-columns:repeat(3,1fr)}
+      .product-grid{grid-template-columns:repeat(2,1fr)}
+      .hero{grid-template-columns:1fr}
+      .hero-image{display:none}
+      .hero-text{padding:48px 24px}
+      .hero-title{font-size:38px}
+      .ig-grid{grid-template-columns:repeat(3,1fr)}
+      .footer-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:640px){
+      .trust-inner{grid-template-columns:1fr 1fr}
+      .cat-grid{grid-template-columns:repeat(2,1fr)}
+      .nav-links{display:none}
+      .footer-grid{grid-template-columns:1fr}
+      .ig-grid{grid-template-columns:repeat(3,1fr)}
+    }
+  </style>
 </head>
 <body>
-    <!-- Top Announcement Bar -->
-    <div class="announcement-bar">
-        🎉 FREE SHIPPING on orders over $50 | 11+ Years Manufacturing Experience
+
+<!-- 公告栏 -->
+<div class="announcement-bar">
+  🎉 FREE SHIPPING on orders over $50 | 11+ Years Manufacturing Experience | Factory Direct Pricing
+</div>
+
+<!-- 导航 -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <img src="logo.svg" alt="Timesrui Logo" class="logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      <span class="text-logo" style="display:none">TIMESRUI</span>
     </div>
+    <ul class="nav-links">
+      <li><a href="#categories">Categories</a></li>
+      <li><a href="#products">Best Sellers</a></li>
+      <li><a href="#new-arrivals">New Arrivals</a></li>
+      <li><a href="catalog.html">All Products</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="icon-btn" title="Search">🔍</button>
+      <button class="icon-btn" title="Account">👤</button>
+      <button class="icon-btn" title="Cart" style="position:relative">🛒<span class="cart-badge" id="cartCount">0</span></button>
+      <a href="editor.html" class="nav-editor-btn">✏️ 编辑网站</a>
+    </div>
+  </div>
+</nav>
 
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-logo">
-                <img src="logo.svg" alt="Timesrui Logo" class="logo-img">
-            </div>
-            <ul class="nav-menu">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#products">Products</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="editor.html" target="_blank">Edit Mode</a></li>
-            </ul>
-            <div class="nav-icons">
-                <span class="icon">🔍</span>
-                <span class="icon">👤</span>
-                <span class="icon">🛒 <span class="cart-count">0</span></span>
-            </div>
+<!-- Hero -->
+<section class="hero" id="home">
+  <div class="hero-text">
+    <div class="hero-eyebrow">Premium Resin Art Supplies</div>
+    <h1 class="hero-title">Create Your Own<br><span>Magic</span></h1>
+    <p class="hero-desc">Factory-direct resin supplies from Xiamen, China. 11+ years of manufacturing experience. OEM/ODM available for bulk orders.</p>
+    <div class="hero-actions">
+      <a href="#products" class="btn-primary">Shop Best Sellers →</a>
+      <a href="catalog.html" class="btn-outline">View All Products</a>
+    </div>
+  </div>
+  <div class="hero-image">
+    <span class="hero-placeholder">🎨</span>
+  </div>
+</section>
+
+<!-- 信任徽章 -->
+<div class="trust-bar">
+  <div class="trust-inner">
+    <div class="trust-item">
+      <div class="trust-icon">🚚</div>
+      <div class="trust-text"><strong>FAST SHIPPING</strong><span>Process & ship within 2 business days</span></div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">🏭</div>
+      <div class="trust-text"><strong>FACTORY DIRECT</strong><span>11+ years, 4,092㎡ facility in Fujian</span></div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">💎</div>
+      <div class="trust-text"><strong>TOP QUALITY</strong><span>High-quality materials for reliable results</span></div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">🎨</div>
+      <div class="trust-text"><strong>FULL CUSTOMIZATION</strong><span>OEM/ODM services for bulk orders</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 分类区 -->
+<section class="section" id="categories">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 class="section-title">Shop by Category</h2>
+      <a href="catalog.html" class="section-link">View All →</a>
+    </div>
+    <div class="cat-grid" id="catGrid">
+      <a href="catalog.html#epoxy-resin" class="cat-card">
+        <div class="cat-img" style="background:#e8f5e9"><span class="cat-emoji">💧</span></div>
+        <h3>Epoxy Resin</h3><p>Crystal clear art</p>
+      </a>
+      <a href="catalog.html#uv-resin" class="cat-card">
+        <div class="cat-img" style="background:#fff3e0"><span class="cat-emoji">☀️</span></div>
+        <h3>UV Resin</h3><p>Quick cure results</p>
+      </a>
+      <a href="catalog.html#silicone-molds" class="cat-card">
+        <div class="cat-img" style="background:#fce4ec"><span class="cat-emoji">🧁</span></div>
+        <h3>Silicone Molds</h3><p>Endless creativity</p>
+      </a>
+      <a href="catalog.html#diy-kits" class="cat-card">
+        <div class="cat-img" style="background:#ede7f6"><span class="cat-emoji">🎁</span></div>
+        <h3>DIY Kits</h3><p>Everything to start</p>
+      </a>
+      <a href="catalog.html#pigments" class="cat-card">
+        <div class="cat-img" style="background:#fff8e1"><span class="cat-emoji">🎨</span></div>
+        <h3>Pigments</h3><p>Rainbow colors</p>
+      </a>
+      <a href="catalog.html#diy-tools" class="cat-card">
+        <div class="cat-img" style="background:#e0f7fa"><span class="cat-emoji">✨</span></div>
+        <h3>DIY Tools</h3><p>Pro results</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 热销产品 -->
+<section class="products-section" id="products">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 class="section-title">Hottest Buying Trends</h2>
+      <a href="catalog.html" class="section-link">View All →</a>
+    </div>
+    <div class="product-grid" id="productGrid">
+      <!-- 由 script.js 填充 -->
+    </div>
+  </div>
+</section>
+
+<!-- 新品区 -->
+<section class="new-arrivals section" id="new-arrivals">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 class="section-title">New Arrivals</h2>
+      <a href="catalog.html" class="section-link">View All →</a>
+    </div>
+    <div class="product-grid" id="newGrid">
+      <!-- 由 script.js 填充 -->
+    </div>
+  </div>
+</section>
+
+<!-- 社区图片 -->
+<section class="community" id="community">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 class="section-title">Instagram Moments</h2>
+      <a href="#" class="section-link">@timesruiresin →</a>
+    </div>
+    <div class="ig-grid" id="igGrid"></div>
+  </div>
+</section>
+
+<!-- 订阅 -->
+<section class="newsletter">
+  <h2>Join Our Creative Family</h2>
+  <p>Get exclusive tutorials, special discounts & early access to new products</p>
+  <form class="newsletter-form" onsubmit="handleSubscribe(event)">
+    <input type="email" placeholder="Enter your email address" required>
+    <button type="submit">Subscribe →</button>
+  </form>
+</section>
+
+<!-- Footer -->
+<footer class="footer" id="about">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">TIMESRUI</div>
+        <p>Xiamen Timesrui Polymeric Material Technology Co., Ltd. Factory-direct resin supplies with 11+ years of manufacturing experience.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="catalog.html#epoxy-resin">Epoxy Resin</a></li>
+          <li><a href="catalog.html#uv-resin">UV Resin</a></li>
+          <li><a href="catalog.html#silicone-molds">Silicone Molds</a></li>
+          <li><a href="catalog.html#diy-kits">DIY Kits</a></li>
+          <li><a href="catalog.html#pigments">Pigments</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Shipping Policy</a></li>
+          <li><a href="#">Return Policy</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Tutorials</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Wholesale</a></li>
+          <li><a href="#">OEM/ODM</a></li>
+          <li><a href="#">Certifications</a></li>
+          <li><a href="editor.html">Site Editor</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span id="footerCopy">&copy; 2026 Xiamen Timesrui Polymeric Material Technology Co., Ltd. All rights reserved.</span>
+      <span>Made with ❤️ in Fujian, China</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast-notify" id="toast"></div>
+
+<script>
+  const STORAGE_KEY = 'timesrui.visualEditor.products.v3';
+
+  function getState(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); }catch{ return {}; }
+  }
+
+  function esc(s){ return String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+
+  function toast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.classList.add('show');
+    clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2500);
+  }
+
+  function applyState(){
+    const s=getState();
+    if(s.siteTitle) document.title=s.siteTitle;
+    if(s.announcement) document.querySelector('.announcement-bar').textContent=s.announcement;
+    if(s.logoUrl){ const l=document.querySelector('.logo-img'); if(l) l.src=s.logoUrl; }
+    if(s.heroTitle){ const h=document.querySelector('.hero-title'); if(h) h.innerHTML=s.heroTitle.replace(/\n/g,'<br>'); }
+    if(s.heroSubtitle){ const h=document.querySelector('.hero-desc'); if(h) h.textContent=s.heroSubtitle; }
+    if(s.heroBtn){ const h=document.querySelector('.hero-actions .btn-primary'); if(h) h.textContent=s.heroBtn+' →'; }
+    if(s.heroBg){ const hero=document.querySelector('.hero'); if(hero) hero.style.background=`linear-gradient(135deg,${s.heroBg} 0%,#f0ebe3 100%)`; }
+    if(s.primaryColor){
+      const style=document.createElement('style');
+      style.textContent=`.btn-primary:hover,.add-cart-btn:hover,.newsletter-form button,.section-link,.nav-editor-btn:hover{background:${s.primaryColor} !important;color:#fff !important;}.product-card:hover{box-shadow:0 12px 40px ${s.primaryColor}33 !important;}`;
+      document.head.appendChild(style);
+    }
+    if(s.footerCompany){ const fc=document.getElementById('footerCopy'); if(fc) fc.innerHTML=`&copy; 2026 ${esc(s.footerCompany)}. All rights reserved.`; }
+    if(Array.isArray(s.categories)) renderCategories(s.categories);
+    if(Array.isArray(s.products)) renderProducts(s.products);
+    if(Array.isArray(s.instagram)) renderInstagram(s.instagram);
+  }
+
+  function renderCategories(cats){
+    const grid=document.getElementById('catGrid'); if(!grid) return;
+    grid.innerHTML='';
+    cats.forEach(c=>{
+      const a=document.createElement('a');
+      a.href=c.link||'catalog.html';
+      a.className='cat-card';
+      const bg=c.bg||'#f5f5f5';
+      const media=c.image?`<img src="${esc(c.image)}" alt="${esc(c.title)}">`:`<span class="cat-emoji">${esc(c.emoji||'✨')}</span>`;
+      a.innerHTML=`<div class="cat-img" style="background:${bg}">${media}</div><h3>${esc(c.title)}</h3><p>${esc(c.desc)}</p>`;
+      grid.appendChild(a);
+    });
+  }
+
+  function makeBadgeClass(badge){
+    if(!badge) return '';
+    if(badge.includes('Best')) return 'bestseller';
+    if(badge.includes('New')) return 'new';
+    if(badge.includes('Hot')) return 'hot';
+    if(badge.includes('Sale')) return 'sale';
+    return 'bestseller';
+  }
+
+  function renderProducts(products){
+    const grid=document.getElementById('productGrid');
+    const newGrid=document.getElementById('newGrid');
+    if(!grid||!newGrid) return;
+    grid.innerHTML=''; newGrid.innerHTML='';
+    const bestSellers=products.filter(p=>p.badge&&(p.badge.includes('Best')||p.badge.includes('Hot')||p.badge.includes('Sale')));
+    const newArrivals=products.filter(p=>p.badge&&p.badge.includes('New'));
+    const rest=products.filter(p=>!p.badge||(p.badge&&!p.badge.includes('Best')&&!p.badge.includes('Hot')&&!p.badge.includes('Sale')&&!p.badge.includes('New')));
+    const mainList=bestSellers.length>0?[...bestSellers,...rest]:products;
+    const newList=newArrivals.length>0?newArrivals:products.slice(0,4);
+    mainList.slice(0,8).forEach(p=>grid.appendChild(makeProductCard(p)));
+    newList.slice(0,4).forEach(p=>newGrid.appendChild(makeProductCard(p)));
+    grid.querySelectorAll('.add-cart-btn').forEach(btn=>{
+      btn.addEventListener('click',e=>{
+        e.stopPropagation();
+        const count=document.getElementById('cartCount');
+        count.textContent=String((parseInt(count.textContent)||0)+1);
+        toast(`"${btn.dataset.name}" added to cart!`);
+      });
+    });
+    newGrid.querySelectorAll('.add-cart-btn').forEach(btn=>{
+      btn.addEventListener('click',e=>{
+        e.stopPropagation();
+        const count=document.getElementById('cartCount');
+        count.textContent=String((parseInt(count.textContent)||0)+1);
+        toast(`"${btn.dataset.name}" added to cart!`);
+      });
+    });
+  }
+
+  function makeProductCard(p){
+    const card=document.createElement('div');
+    card.className='product-card';
+    const badgeCls=makeBadgeClass(p.badge||'');
+    card.innerHTML=`
+      ${p.badge?`<div class="product-badge ${badgeCls}">${esc(p.badge)}</div>`:''}
+      <div class="product-img"><img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy"></div>
+      <div class="product-info">
+        <div class="product-name">${esc(p.name)}</div>
+        <div class="product-desc">${esc(p.desc)}</div>
+        <div class="product-bottom">
+          <div class="product-price">
+            <span class="price-now">${esc(p.price)}</span>
+            ${p.originalPrice?`<span class="price-was">${esc(p.originalPrice)}</span>`:''}
+          </div>
+          <button class="add-cart-btn" data-name="${esc(p.name)}" title="Add to Cart">+</button>
         </div>
-    </nav>
+      </div>
+    `;
+    return card;
+  }
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h2 class="hero-title">✨ Create Your Own Magic ✨</h2>
-            <p class="hero-subtitle">Premium DIY resin supplies for crafters, artists & dreamers 💕</p>
-            <button class="btn btn-primary">Start Creating 🎨</button>
-        </div>
-    </section>
+  function renderInstagram(items){
+    const grid=document.getElementById('igGrid'); if(!grid) return;
+    grid.innerHTML='';
+    items.forEach(item=>{
+      const div=document.createElement('div');
+      div.className='ig-card';
+      div.style.background=item.bg||'#f0f0f0';
+      div.innerHTML=item.image
+        ?`<img src="${esc(item.image)}" alt="community"><div class="ig-overlay"><span>${esc(item.likes||'')}</span></div>`
+        :`<div class="ig-bg">${esc(item.likes||'')}</div><div class="ig-overlay"><span>See more</span></div>`;
+      div.addEventListener('click',()=>toast('Opening Instagram... 📷'));
+      grid.appendChild(div);
+    });
+  }
 
-    <!-- Trust Badges -->
-    <section class="trust-badges">
-        <div class="container">
-            <div class="badge">
-                <div class="badge-icon">🚚</div>
-                <h3>FAST SHIPPING</h3>
-                <p>We process and ship orders within 2 business days</p>
-            </div>
-            <div class="badge">
-                <div class="badge-icon">🏭</div>
-                <h3>FACTORY DIRECT</h3>
-                <p>11+ years manufacturing experience, 4,092㎡ facility</p>
-            </div>
-            <div class="badge">
-                <div class="badge-icon">💎</div>
-                <h3>TOP QUALITY</h3>
-                <p>High-quality materials for reliable crafting results</p>
-            </div>
-            <div class="badge">
-                <div class="badge-icon">🎨</div>
-                <h3>FULL CUSTOMIZATION</h3>
-                <p>OEM/ODM services available for bulk orders</p>
-            </div>
-        </div>
-    </section>
+  function handleSubscribe(e){
+    e.preventDefault();
+    const input=e.target.querySelector('input');
+    if(input.value){ toast('Thank you for subscribing! 🎉'); input.value=''; }
+  }
 
-    <!-- Shop by Category -->
-    <section class="categories">
-        <div class="container">
-            <h2 class="section-title">Shop by Category</h2>
-            <p class="section-subtitle">Main categories: UV Resin, Epoxy Resin, Pigment, Silicone Mold, DIY Resin Kit</p>
-            <div class="category-grid">
-                <a href="catalog.html#epoxy-resin" class="category-card">
-                    <div class="category-image" style="background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);">
-                        <span class="category-emoji">💧</span>
-                    </div>
-                    <h3>Epoxy Resin</h3>
-                    <p>Crystal clear, perfect for art</p>
-                </a>
-                <a href="catalog.html#uv-resin" class="category-card">
-                    <div class="category-image" style="background: linear-gradient(135deg, #ffd3b6 0%, #ffaaa5 100%);">
-                        <span class="category-emoji">☀️</span>
-                    </div>
-                    <h3>UV Resin</h3>
-                    <p>Quick cure, instant results! ⭐</p>
-                </a>
-                <a href="catalog.html#silicone-molds" class="category-card">
-                    <div class="category-image" style="background: linear-gradient(135deg, #ff8b94 0%, #ffaaa5 100%);">
-                        <span class="category-emoji">🧁</span>
-                    </div>
-                    <h3>Silicone Molds</h3>
-                    <p>Cute designs, endless creativity</p>
-                </a>
-                <a href="catalog.html#diy-kits" class="category-card">
-                    <div class="category-image" style="background: linear-gradient(135deg, #b4a7d6 0%, #ce9ffc 100%);">
-                        <span class="category-emoji">🎁</span>
-                    </div>
-                    <h3>DIY Resin Kits</h3>
-                    <p>Everything you need to start!</p>
-                </a>
-                <a href="catalog.html#pigments" class="category-card">
-                    <div class="category-image" style="background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%);">
-                        <span class="category-emoji">🎨</span>
-                    </div>
-                    <h3>Pigments</h3>
-                    <p>Rainbow colors for your art ⭐</p>
-                </a>
-                <a href="catalog.html#diy-tools" class="category-card">
-                    <div class="category-image" style="background: linear-gradient(135deg, #74ebd5 0%, #acb6e5 100%);">
-                        <span class="category-emoji">✨</span>
-                    </div>
-                    <h3>DIY Tools</h3>
-                    <p>Make your crafts shine!</p>
-                </a>
-            </div>
-        </div>
-    </section>
+  // 默认产品（如果没有云端数据）
+  const fallbackProducts=[
+    {image:'images/AB Epoxy Resin.png',badge:'Best Seller ⭐',name:'AB Epoxy Resin',desc:'Crystal clear, UV resistant, 1:1 ratio',price:'$29.99',originalPrice:'$39.99'},
+    {image:'images/UV Resin.jpg',badge:'New! 🎉',name:'UV Resin',desc:'Quick cure, instant results!',price:'$19.99',originalPrice:''},
+    {image:'images/Silicone Molds.png',badge:'',name:'Silicone Molds',desc:'20 adorable designs, super easy!',price:'$24.99',originalPrice:''},
+    {image:'images/DIY Resin Kits.png',badge:'',name:'DIY Resin Starter Kit',desc:'Everything you need to start!',price:'$34.99',originalPrice:''},
+    {image:'images/Pigments & Dyes.webp',badge:'Hot Sale 🔥',name:'Pigments & Dyes',desc:'24 vibrant colors, mica powder',price:'$16.99',originalPrice:'$24.99'},
+    {image:'images/Glitters & Sparkles.png',badge:'',name:'Glitters & Sparkles',desc:'Make your resin art shine!',price:'$18.99',originalPrice:''},
+    {image:'images/Dried Flowers.png',badge:'',name:'Dried Flowers',desc:'Natural dried flowers for resin art',price:'$12.99',originalPrice:''},
+    {image:'images/Crafting Tools.png',badge:'',name:'Crafting Tools',desc:'Professional tools for perfect results',price:'$22.99',originalPrice:''}
+  ];
+  const fallbackInstagram=[
+    {image:'',likes:'💕 1.2k',bg:'linear-gradient(135deg,#ffeaa7,#fab1a0)'},
+    {image:'',likes:'💕 2.3k',bg:'linear-gradient(135deg,#ff8b94,#ffaaa5)'},
+    {image:'',likes:'💕 856',bg:'linear-gradient(135deg,#a8e6cf,#dcedc1)'},
+    {image:'',likes:'💕 3.1k',bg:'linear-gradient(135deg,#ffd3b6,#ffaaa5)'},
+    {image:'',likes:'💕 1.8k',bg:'linear-gradient(135deg,#fccb90,#d57eeb)'},
+    {image:'',likes:'💕 2.7k',bg:'linear-gradient(135deg,#b4a7d6,#ce9ffc)'}
+  ];
 
-    <!-- Hot Products -->
-    <section class="products">
-        <div class="container">
-            <h2 class="section-title">Hottest Buying Trends</h2>
-            <div class="product-grid">
-                <div class="product-card">
-                    <div class="product-badge">Best Seller ⭐</div>
-                    <div class="product-image">
-                        <img src="images/AB Epoxy Resin.png" alt="AB Epoxy Resin">
-                    </div>
-                    <h3>AB Epoxy Resin</h3>
-                    <p class="product-desc">Crystal clear, UV resistant, 1:1 ratio</p>
-                    <div class="product-price">
-                        <span class="price">$29.99</span>
-                        <span class="original-price">$39.99</span>
-                    </div>
-                    <button class="btn btn-secondary">Add to Cart 🛒</button>
-                </div>
-                <div class="product-card">
-                    <div class="product-badge">New! 🎉</div>
-                    <div class="product-image">
-                        <img src="images/UV Resin.jpg" alt="UV Resin">
-                    </div>
-                    <h3>UV Resin</h3>
-                    <p class="product-desc">Quick cure, instant results! Perfect for beginners</p>
-                    <div class="product-price">
-                        <span class="price">$19.99</span>
-                    </div>
-                    <button class="btn btn-secondary">Add to Cart 🛒</button>
-                </div>
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="images/Silicone Molds.png" alt="Silicone Molds">
-                    </div>
-                    <h3>Silicone Molds</h3>
-                    <p class="product-desc">20 adorable designs, super easy!</p>
-                    <div class="product-price">
-                        <span class="price">$24.99</span>
-                    </div>
-                    <button class="btn btn-secondary">Add to Cart 🛒</button>
-                </div>
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="images/DIY Resin Kits.png" alt="DIY Resin Kits">
-                    </div>
-                    <h3>DIY Resin Starter Kit</h3>
-                    <p class="product-desc">Everything you need to start crafting!</p>
-                    <div class="product-price">
-                        <span class="price">$34.99</span>
-                    </div>
-                    <button class="btn btn-secondary">Add to Cart 🛒</button>
-                </div>
-                <div class="product-card">
-                    <div class="product-badge">Hot Sale 🔥</div>
-                    <div class="product-image">
-                        <img src="images/Pigments & Dyes.webp" alt="Pigments & Dyes">
-                    </div>
-                    <h3>Pigments & Dyes</h3>
-                    <p class="product-desc">24 vibrant colors, mica powder</p>
-                    <div class="product-price">
-                        <span class="price">$16.99</span>
-                        <span class="original-price">$24.99</span>
-                    </div>
-                    <button class="btn btn-secondary">Add to Cart 🛒</button>
-                </div>
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="images/Glitters & Sparkles.png" alt="Glitters & Sparkles">
-                    </div>
-                    <h3>Glitters & Sparkles</h3>
-                    <p class="product-desc">Make your resin art shine!</p>
-                    <div class="product-price">
-                        <span class="price">$18.99</span>
-                    </div>
-                    <button class="btn btn-secondary">Add to Cart 🛒</button>
-                </div>
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="images/Dried Flowers.png" alt="Dried Flowers">
-                    </div>
-                    <h3>Dried Flowers</h3>
-                    <p class="product-desc">Natural dried flowers for beautiful resin art</p>
-                    <div class="product-price">
-                        <span class="price">$12.99</span>
-                    </div>
-                    <button class="btn btn-secondary">Add to Cart 🛒</button>
-                </div>
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="images/Crafting Tools.png" alt="Crafting Tools">
-                    </div>
-                    <h3>Crafting Tools</h3>
-                    <p class="product-desc">Professional tools for perfect results</p>
-                    <div class="product-price">
-                        <span class="price">$22.99</span>
-                    </div>
-                    <button class="btn btn-secondary">Add to Cart 🛒</button>
-                </div>
-            </div>
-        </div>
-    </section>
+  // 初始化
+  const s=getState();
+  if(!Array.isArray(s.products)||!s.products.length) renderProducts(fallbackProducts);
+  if(!Array.isArray(s.instagram)||!s.instagram.length) renderInstagram(fallbackInstagram);
+  applyState();
 
-    <!-- Instagram Section -->
-    <section class="instagram">
-        <div class="container">
-            <h2 class="section-title">💕 Community Creations 💕</h2>
-            <p class="section-subtitle">Join 50K+ crafters! Share your art with #TimesruiResin</p>
-            <div class="instagram-grid">
-                <div class="instagram-card" style="background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);">
-                    <div class="instagram-overlay">
-                        <span class="instagram-icon">💕 1.2k</span>
-                    </div>
-                </div>
-                <div class="instagram-card" style="background: linear-gradient(135deg, #ff8b94 0%, #ffaaa5 100%);">
-                    <div class="instagram-overlay">
-                        <span class="instagram-icon">💕 2.3k</span>
-                    </div>
-                </div>
-                <div class="instagram-card" style="background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);">
-                    <div class="instagram-overlay">
-                        <span class="instagram-icon">💕 856</span>
-                    </div>
-                </div>
-                <div class="instagram-card" style="background: linear-gradient(135deg, #ffd3b6 0%, #ffaaa5 100%);">
-                    <div class="instagram-overlay">
-                        <span class="instagram-icon">💕 3.1k</span>
-                    </div>
-                </div>
-                <div class="instagram-card" style="background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%);">
-                    <div class="instagram-overlay">
-                        <span class="instagram-icon">💕 1.8k</span>
-                    </div>
-                </div>
-                <div class="instagram-card" style="background: linear-gradient(135deg, #b4a7d6 0%, #ce9ffc 100%);">
-                    <div class="instagram-overlay">
-                        <span class="instagram-icon">💕 2.7k</span>
-                    </div>
-                </div>
-            </div>
-            <button class="btn btn-primary" style="margin-top: 30px;">Follow Us 📷 @timesruiresin</button>
-        </div>
-    </section>
+  // 滚动动画
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; } });
+  },{threshold:.1});
+  document.querySelectorAll('.product-card,.cat-card,.ig-card').forEach(el=>{
+    el.style.opacity='0'; el.style.transform='translateY(20px)'; el.style.transition='opacity .5s,transform .5s'; io.observe(el);
+  });
 
-    <!-- Newsletter -->
-    <section class="newsletter">
-        <div class="container">
-            <h2>✨ Join Our Creative Family! ✨</h2>
-            <p>Get exclusive DIY tutorials, special discounts & early access to new products 💕</p>
-            <div class="newsletter-form">
-                <input type="email" placeholder="Your email address ✉️">
-                <button class="btn btn-primary" style="background: white; color: #ff6b9d;">Subscribe Now 🎁</button>
-            </div>
-        </div>
-    </section>
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',e=>{
+      const t=document.querySelector(a.getAttribute('href'));
+      if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
+    });
+  });
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <img src="logo.svg" alt="Timesrui Logo" style="height: 80px; margin-bottom: 15px;">
-                    <h3>TIMESRUI</h3>
-                    <p>Xiamen Timesrui Polymeric Material Technology Co., Ltd. - Competitive OEM factory with 11+ years of industry experience and 4,092㎡ manufacturing facility in Fujian, China.</p>
-                    <div class="social-icons">
-                        <span>📘</span>
-                        <span>📷</span>
-                        <span>🐦</span>
-                        <span>📌</span>
-                    </div>
-                </div>
-                <div class="footer-col">
-                    <h4>Shop</h4>
-                    <ul>
-                        <li><a href="#">Epoxy Resin</a></li>
-                        <li><a href="#">UV Resin</a></li>
-                        <li><a href="#">Silicone Molds</a></li>
-                        <li><a href="#">DIY Kits</a></li>
-                        <li><a href="#">Tools & Accessories</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Support</h4>
-                    <ul>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">Shipping Policy</a></li>
-                        <li><a href="#">Return Policy</a></li>
-                        <li><a href="#">FAQ</a></li>
-                        <li><a href="#">Tutorials</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Wholesale</a></li>
-                        <li><a href="#">OEM/ODM Services</a></li>
-                        <li><a href="#">Quality Control</a></li>
-                        <li><a href="#">Certifications</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Xiamen Timesrui Polymeric Material Technology Co., Ltd. All rights reserved. | Custom Manufacturer | Fujian, China</p>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        window.__timesruiPage = 'index';
-    </script>
-    <script src="script.js"></script>
+  window.__timesruiPage='index';
+</script>
 </body>
 </html>
