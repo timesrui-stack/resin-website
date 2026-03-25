@@ -132,6 +132,11 @@
     .footer-bottom{border-top:1px solid #222;padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:12px}
     .footer-bottom a{color:#aaa;text-decoration:none}
 
+    /* WhatsApp悬浮 */
+    .wa-float{position:fixed;bottom:28px;right:28px;z-index:9999}
+    .wa-float a{display:flex;align-items:center;gap:10px;background:#25d366;color:#fff;padding:13px 22px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,.4);transition:all .2s}
+    .wa-float a:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,211,102,.5)}
+
     /* 通知 */
     .toast-notify{position:fixed;bottom:24px;right:24px;background:#1a1a1a;color:#fff;padding:14px 20px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.2);transform:translateY(100px);opacity:0;transition:all .3s}
     .toast-notify.show{transform:translateY(0);opacity:1}
@@ -328,7 +333,7 @@
       <div class="footer-col">
         <h4>Support</h4>
         <ul>
-          <li><a href="#">Contact Us</a></li>
+          <li><a href="mailto:emily@xiamentimesrui.com">Contact Us</a></li>
           <li><a href="#">Shipping Policy</a></li>
           <li><a href="#">Return Policy</a></li>
           <li><a href="#">FAQ</a></li>
@@ -352,6 +357,10 @@
     </div>
   </div>
 </footer>
+
+<div class="wa-float">
+  <a href="https://wa.me/8618060157302" target="_blank">💬 &nbsp; WhatsApp Us</a>
+</div>
 
 <div class="toast-notify" id="toast"></div>
 
