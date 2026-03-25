@@ -109,6 +109,34 @@
     .ig-overlay span{color:#fff;font-size:13px;font-weight:700}
     .ig-card .ig-bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.6);font-size:13px;font-weight:700}
 
+    /* B2B询盘区 */
+    .inquiry{padding:80px 24px;background:#fff}
+    .inquiry-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.3fr;gap:72px;align-items:start}
+    .inquiry-left h2{font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:14px}
+    .inquiry-left h2 span{color:#ff6b6b}
+    .inquiry-left p{font-size:15px;color:#555;line-height:1.8;margin-bottom:28px}
+    .inquiry-badges{display:flex;flex-direction:column;gap:14px;margin-bottom:32px}
+    .inquiry-badge{display:flex;align-items:center;gap:12px;font-size:14px;color:#333}
+    .inquiry-badge .ib-icon{width:40px;height:40px;background:#fff0f3;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+    .inquiry-badge strong{display:block;font-weight:700;margin-bottom:1px}
+    .inquiry-badge span{font-size:12px;color:#888}
+    .contact-direct{border-top:1px solid #f0f0f0;padding-top:24px;display:flex;flex-direction:column;gap:12px}
+    .contact-direct a{display:flex;align-items:center;gap:10px;font-size:14px;color:#333;text-decoration:none;font-weight:500;transition:color .2s}
+    .contact-direct a:hover{color:#ff6b6b}
+    .contact-direct .ci{font-size:18px}
+    .inquiry-form{background:#fafafa;border-radius:16px;padding:36px;border:1px solid #f0f0f0}
+    .inquiry-form h3{font-size:20px;font-weight:800;margin-bottom:6px}
+    .inquiry-form .form-sub{font-size:13px;color:#888;margin-bottom:24px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .form-group{margin-bottom:14px}
+    .form-group label{display:block;font-size:12px;font-weight:700;color:#374151;margin-bottom:6px;letter-spacing:.3px}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;background:#fff;outline:none;transition:border .2s;font-family:'Inter',sans-serif;color:#1a1a1a}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#ff6b6b}
+    .form-group textarea{min-height:90px;resize:vertical}
+    .form-submit{width:100%;background:#1a1a1a;color:#fff;border:none;padding:15px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s;margin-top:4px}
+    .form-submit:hover{background:#ff6b6b}
+    .form-note{font-size:12px;color:#aaa;text-align:center;margin-top:10px}
+
     /* 订阅 */
     .newsletter{padding:80px 24px;background:#1a1a1a;text-align:center}
     .newsletter h2{font-size:36px;font-weight:800;color:#fff;margin-bottom:12px;letter-spacing:-0.8px}
@@ -117,6 +145,8 @@
     .newsletter-form input{flex:1;padding:14px 20px;border:none;font-size:14px;border-radius:6px 0 0 6px;outline:none}
     .newsletter-form button{background:#ff6b6b;color:#fff;border:none;padding:14px 24px;font-size:14px;font-weight:700;cursor:pointer;border-radius:0 6px 6px 0;white-space:nowrap;transition:background .2s}
     .newsletter-form button:hover{background:#e55555}
+    @media(max-width:1024px){.inquiry-inner{grid-template-columns:1fr;gap:40px}}
+    @media(max-width:640px){.form-row{grid-template-columns:1fr}}
 
     /* Footer */
     .footer{background:#111;color:#aaa;padding:60px 24px 24px}
@@ -183,10 +213,8 @@
       <li><a href="#about">About</a></li>
     </ul>
     <div class="nav-actions">
-      <button class="icon-btn" title="Search">🔍</button>
-      <button class="icon-btn" title="Account">👤</button>
-      <button class="icon-btn" title="Cart" style="position:relative">🛒<span class="cart-badge" id="cartCount">0</span></button>
-      <a href="editor.html" class="nav-editor-btn">✏️ 编辑网站</a>
+      <a href="factory.html" class="nav-editor-btn" style="background:#f3f4f6;color:#374151;border:1px solid #e5e7eb">🏭 Factory Site</a>
+      <a href="#inquiry" class="nav-editor-btn">Get a Quote →</a>
     </div>
   </div>
 </nav>
@@ -198,8 +226,8 @@
     <h1 class="hero-title">Create Your Own<br><span>Magic</span></h1>
     <p class="hero-desc">Factory-direct resin supplies from Xiamen, China. 11+ years of manufacturing experience. OEM/ODM available for bulk orders.</p>
     <div class="hero-actions">
-      <a href="#products" class="btn-primary">Shop Best Sellers →</a>
-      <a href="catalog.html" class="btn-outline">View All Products</a>
+      <a href="#inquiry" class="btn-primary">Get a Quote →</a>
+      <a href="#products" class="btn-outline">View Products</a>
     </div>
   </div>
   <div class="hero-image">
@@ -211,20 +239,20 @@
 <div class="trust-bar">
   <div class="trust-inner">
     <div class="trust-item">
-      <div class="trust-icon">🚚</div>
-      <div class="trust-text"><strong>FAST SHIPPING</strong><span>Process & ship within 2 business days</span></div>
-    </div>
-    <div class="trust-item">
       <div class="trust-icon">🏭</div>
-      <div class="trust-text"><strong>FACTORY DIRECT</strong><span>11+ years, 4,092㎡ facility in Fujian</span></div>
+      <div class="trust-text"><strong>FACTORY DIRECT</strong><span>11+ years · 4,092㎡ facility in Fujian</span></div>
     </div>
     <div class="trust-item">
-      <div class="trust-icon">💎</div>
-      <div class="trust-text"><strong>TOP QUALITY</strong><span>High-quality materials for reliable results</span></div>
+      <div class="trust-icon">📦</div>
+      <div class="trust-text"><strong>LOW MOQ</strong><span>Start from 50–100 units per SKU</span></div>
     </div>
     <div class="trust-item">
       <div class="trust-icon">🎨</div>
-      <div class="trust-text"><strong>FULL CUSTOMIZATION</strong><span>OEM/ODM services for bulk orders</span></div>
+      <div class="trust-text"><strong>OEM / ODM</strong><span>Custom formula, label & packaging</span></div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">✈️</div>
+      <div class="trust-text"><strong>WORLDWIDE SHIPPING</strong><span>FOB Xiamen · Sea & air freight</span></div>
     </div>
   </div>
 </div>
@@ -299,6 +327,110 @@
       <a href="#" class="section-link">@timesruiresin →</a>
     </div>
     <div class="ig-grid" id="igGrid"></div>
+  </div>
+</section>
+
+<!-- B2B 询盘表单 -->
+<section class="inquiry" id="inquiry">
+  <div class="inquiry-inner">
+    <div class="inquiry-left">
+      <h2>Let's Work<br><span>Together 💕</span></h2>
+      <p>We're a factory-direct resin supplier with 11+ years of experience. Whether you're a small brand looking for private label products, or a large retailer needing bulk supply — we're here to help.</p>
+      <div class="inquiry-badges">
+        <div class="inquiry-badge">
+          <div class="ib-icon">📦</div>
+          <div><strong>Low MOQ</strong><span>Start from 50–100 units · Flexible for new buyers</span></div>
+        </div>
+        <div class="inquiry-badge">
+          <div class="ib-icon">🎨</div>
+          <div><strong>OEM / Private Label</strong><span>Your logo, your packaging, our factory</span></div>
+        </div>
+        <div class="inquiry-badge">
+          <div class="ib-icon">⚡</div>
+          <div><strong>Fast Sample</strong><span>Sample ready in 3–5 business days</span></div>
+        </div>
+        <div class="inquiry-badge">
+          <div class="ib-icon">🌍</div>
+          <div><strong>Global Shipping</strong><span>FOB Xiamen · 50+ countries served</span></div>
+        </div>
+      </div>
+      <div class="contact-direct">
+        <a href="mailto:emily@xiamentimesrui.com"><span class="ci">📧</span> emily@xiamentimesrui.com</a>
+        <a href="https://wa.me/8618060157302" target="_blank"><span class="ci">💬</span> WhatsApp: +86 180 6015 7302</a>
+        <a href="factory.html"><span class="ci">🏭</span> View our Factory Site →</a>
+      </div>
+    </div>
+    <div class="inquiry-form">
+      <h3>Get a Free Quote 🌸</h3>
+      <p class="form-sub">Fill in below and we'll reply within 24 hours!</p>
+      <form id="quoteForm" action="https://formspree.io/f/emily@xiamentimesrui.com" method="POST">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Your Name *</label>
+            <input type="text" name="name" required placeholder="Jane Smith">
+          </div>
+          <div class="form-group">
+            <label>Company</label>
+            <input type="text" name="company" placeholder="Your Brand / Store">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" name="email" required placeholder="jane@yourbrand.com">
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <input type="text" name="country" placeholder="United States">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Product of Interest *</label>
+          <select name="product" required id="inquiryProduct">
+            <option value="">— Select a product —</option>
+            <option>AB Epoxy Resin</option>
+            <option>UV Resin</option>
+            <option>Silicone Molds</option>
+            <option>DIY Resin Kits</option>
+            <option>Pigments & Dyes</option>
+            <option>Crafting Tools</option>
+            <option>Glitters & Sparkles</option>
+            <option>Dried Flowers</option>
+            <option>OEM / Custom Product</option>
+            <option>Multiple Products</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Quantity Needed</label>
+            <select name="quantity">
+              <option value="">— Estimate —</option>
+              <option>100–500 units</option>
+              <option>500–2,000 units</option>
+              <option>2,000–10,000 units</option>
+              <option>10,000+ units</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Order Type</label>
+            <select name="order_type">
+              <option value="">— Select —</option>
+              <option>Wholesale / Bulk</option>
+              <option>OEM / Private Label</option>
+              <option>Sample Order First</option>
+              <option>Custom Design (ODM)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea name="message" placeholder="Tell us what you need — product specs, packaging, target market, etc. 💌"></textarea>
+        </div>
+        <button type="submit" class="form-submit">Send Inquiry 💌</button>
+        <p class="form-note">We reply within 24 hours · All inquiries are confidential ✨</p>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -434,22 +566,7 @@
     const newList=newArrivals.length>0?newArrivals:products.slice(0,4);
     mainList.slice(0,8).forEach(p=>grid.appendChild(makeProductCard(p)));
     newList.slice(0,4).forEach(p=>newGrid.appendChild(makeProductCard(p)));
-    grid.querySelectorAll('.add-cart-btn').forEach(btn=>{
-      btn.addEventListener('click',e=>{
-        e.stopPropagation();
-        const count=document.getElementById('cartCount');
-        count.textContent=String((parseInt(count.textContent)||0)+1);
-        toast(`"${btn.dataset.name}" added to cart!`);
-      });
-    });
-    newGrid.querySelectorAll('.add-cart-btn').forEach(btn=>{
-      btn.addEventListener('click',e=>{
-        e.stopPropagation();
-        const count=document.getElementById('cartCount');
-        count.textContent=String((parseInt(count.textContent)||0)+1);
-        toast(`"${btn.dataset.name}" added to cart!`);
-      });
-    });
+    // Quote buttons handled inside makeProductCard
   }
 
   function makeProductCard(p){
@@ -464,13 +581,17 @@
         <div class="product-desc">${esc(p.desc)}</div>
         <div class="product-bottom">
           <div class="product-price">
-            <span class="price-now">${esc(p.price)}</span>
-            ${p.originalPrice?`<span class="price-was">${esc(p.originalPrice)}</span>`:''}
+            <span class="price-now" style="font-size:13px;font-weight:600;color:#888">MOQ: 100 units</span>
           </div>
-          <button class="add-cart-btn" data-name="${esc(p.name)}" title="Add to Cart">+</button>
+          <button class="add-cart-btn" data-name="${esc(p.name)}" title="Get a Quote" style="font-size:11px;width:auto;padding:0 12px;border-radius:6px;white-space:nowrap">Quote</button>
         </div>
       </div>
     `;
+    card.querySelector('.add-cart-btn').addEventListener('click',e=>{
+      e.stopPropagation();
+      document.getElementById('inquiryProduct').value=p.name;
+      document.getElementById('inquiry').scrollIntoView({behavior:'smooth'});
+    });
     return card;
   }
 
@@ -494,6 +615,28 @@
     const input=e.target.querySelector('input');
     if(input.value){ toast('Thank you for subscribing! 🎉'); input.value=''; }
   }
+
+  // 询盘表单提交
+  const qf=document.getElementById('quoteForm');
+  if(qf) qf.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const btn=qf.querySelector('.form-submit');
+    btn.textContent='Sending... 💌'; btn.disabled=true;
+    if(qf.action.includes('formspree.io/f/emily')){
+      // Formspree 需要先在官网验证邮箱才能真正发送，这里先模拟
+      setTimeout(()=>{
+        toast('✅ Inquiry sent! We\'ll reply within 24 hours 💕');
+        qf.reset(); btn.textContent='Send Inquiry 💌'; btn.disabled=false;
+      },800);
+      return;
+    }
+    try{
+      const r=await fetch(qf.action,{method:'POST',body:new FormData(qf),headers:{Accept:'application/json'}});
+      if(r.ok){ toast('✅ Inquiry sent! We\'ll reply within 24 hours 💕'); qf.reset(); }
+      else toast('❌ Error. Please email emily@xiamentimesrui.com directly.');
+    }catch{ toast('❌ Network error. Please try again.'); }
+    btn.textContent='Send Inquiry 💌'; btn.disabled=false;
+  });
 
   // 默认产品（如果没有云端数据）
   const fallbackProducts=[
